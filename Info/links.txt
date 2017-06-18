@@ -1,0 +1,11 @@
+#Cartesian NAO
+http://doc.aldebaran.com/1-14/naoqi/motion/control-cartesian.html
+http://www.bx.psu.edu/~thanh/naoqi/naoqi/motion/control-cartesian-tuto.html
+#SetPositions
+http://doc.aldebaran.com/2-1/naoqi/motion/control-cartesian-api.html#ALMotionProxy::setPositions__AL::ALValueCR.AL::ALValueCR.AL::ALValueCR.floatCR.AL::ALValueCR
+
+
+#BVH
+http://forum.maratis3d.com/viewtopic.php?id=59
+http://www.dcs.shef.ac.uk/intranet/research/public/resmes/CS0111.pdf
+
