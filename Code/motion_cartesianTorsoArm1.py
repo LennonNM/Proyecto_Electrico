@@ -1,4 +1,4 @@
-# -*- encoding: UTF-8 -*- 
+# -*- encoding: UTF-8 -*-
 
 '''Cartesian control: Multiple Effector Trajectories'''
 
@@ -85,7 +85,7 @@ def main(robotIP):
 
 
 if __name__ == "__main__":
-    robotIp = "127.0.0.1"
+    robotIp = "192.168.18.214"
 
     if len(sys.argv) <= 1:
         print "Usage python motion_cartesianTorsoArm1.py robotIP (optional default: 127.0.0.1)"
