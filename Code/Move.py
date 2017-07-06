@@ -31,124 +31,85 @@ def main(robotIP):
 
     # Motion SetUp
     space        = motion.FRAME_TORSO
-    isAbsolute   = False
+    isAbsolute   = True
     useSensor    = False
 
-    #Body effectors
-    LArm = "LArm"
-    RArm = "RArm"
-    Torso = "Torso"
-    Head = "Head"
-    RLeg = "RLeg"
-    LLeg = "LLeg"
+    #Starts motors and goes to init position
+    motionProxy.wakeUp()
+
+    #Body effectors to Use
+    #  Head, LArm, LLeg, RLeg, RArm, Torso
 
     #Origin Position for Torso
     origin = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
 
     # Motion of Arms and Torso with block process
-    effectorList = [ Head, LArm, LLeg, RLeg, RArm, Torso ]
+    effectorList = [ "Head", "LArm", "LLeg", "RLeg", "RArm", "Torso" ] #Order of effectors to receive vectors on setPositionInterpolations
     axisMaskList = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL,
                     motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
 
     # Initial Time List
     timeArray = numpy.array( [[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]] ) #seconds
 
-    #Coordinates list declaration
-    LARM_C  =    0
-    RARM_C  =    0
-    TORSO_C =    0
-    HEAD_C  =    0
-    RLEG_C  =    0
-    LLEG_C  =    0
-
     #Coordinates process from file
     coordinate = open("coordinates.txt", "r") #Open text file
+    index = 0
 
     for line in coordinate.readlines():
-        LARM_C = map(float, line.split()) #Transforms string list to float
+        #Assign Coordinates to respective effector vector
+        if (index == 0):
+            nextPos_HEAD = map(float, line.split()) #Transforms string list to float
+        elif (index == 1 ):
+            nextPos_LARM = map(float, line.split())
+        elif (index == 2 ):
+            nextPos_LLEG = map(float, line.split())
+        elif (index == 3 ):
+            nextPos_RLEG = map(float, line.split())
+        elif (index == 4 ):
+            nextPos_RARM = map(float, line.split())
+        elif (index == 5 ):
+            nextPos_TORSO = map(float, line.split())
+        #Line #7 is a separator for coordinates groups
 
-        #Get Previous Positions
-        prevPos_LARM = motionProxy.getPosition(LArm, space, useSensor)
-        prevPos_RARM = motionProxy.getPosition(RArm, space, useSensor)
-        prevPos_TORSO = motionProxy.getPosition(Torso, space, useSensor)
-        prevPos_HEAD = motionProxy.getPosition(Head, space, useSensor)
-        prevPos_RLEG = motionProxy.getPosition(RLeg, space, useSensor)
-        prevPos_LLEG = motionProxy.getPosition(LLeg, space, useSensor)
+        if (index == 6):
+            #All 6 effectors vector lists collected
+            index = 0
 
-        #Set Next Positions
-            #Left Arm
-        nextPos_LARM = [
-                         prevPos_LARM[0] + LARM_C[0],
-                         prevPos_LARM[1] + LARM_C[1],
-                         prevPos_LARM[2] + LARM_C[2],
-                         prevPos_LARM[3] + LARM_C[3],
-                         prevPos_LARM[4] + LARM_C[4],
-                         prevPos_LARM[5] + LARM_C[5]
-                         ]
-            #Right Arm
-        nextPos_RARM = [
-                          prevPos_RARM[0] + 0.00,
-                          prevPos_RARM[1] + 0.00,
-                          prevPos_RARM[2] + 0.00,
-                          prevPos_RARM[3] + 0.00,
-                          prevPos_RARM[4] + 0.00,
-                          prevPos_RARM[5] + 0.00
-                          ]
-            #Torso
-        nextPos_TORSO = [
-                         prevPos_TORSO[0] + 0.00,
-                         prevPos_TORSO[1] + 0.00,
-                         prevPos_TORSO[2] + 0.00,
-                         prevPos_TORSO[3] + 0.00,
-                         prevPos_TORSO[4] + 0.00,
-                         prevPos_TORSO[5] + 0.00
-                         ]
-            #Head
-        nextPos_HEAD = [
-                         prevPos_HEAD[0] + 0.00,
-                         prevPos_HEAD[1] + 0.00,
-                         prevPos_HEAD[2] + 0.00,
-                         prevPos_HEAD[3] + 0.00,
-                         prevPos_HEAD[4] + 0.00,
-                         prevPos_HEAD[5] + 0.00
-                         ]
-            #Right LEG
-        nextPos_RLEG = [
-                         prevPos_RLEG[0] + 0.00,
-                         prevPos_RLEG[1] + 0.00,
-                         prevPos_RLEG[2] + 0.00,
-                         prevPos_RLEG[3] + 0.00,
-                         prevPos_RLEG[4] + 0.00,
-                         prevPos_RLEG[5] + 0.00
-                         ]
-            #Left LEG
-        nextPos_LLEG = [
-                         prevPos_LLEG[0] + 0.00,
-                         prevPos_LLEG[1] + 0.00,
-                         prevPos_LLEG[2] + 0.00,
-                         prevPos_LLEG[3] + 0.00,
-                         prevPos_LLEG[4] + 0.00,
-                         prevPos_LLEG[5] + 0.00
-                         ]
+            #Get Previous Positions
+            prevPos_HEAD  = motionProxy.getPosition("Head", space, useSensor)
+            prevPos_LARM  = motionProxy.getPosition("LArm", space, useSensor)
+            prevPos_LLEG  = motionProxy.getPosition("LLeg", space, useSensor)
+            prevPos_RARM  = motionProxy.getPosition("RArm", space, useSensor)
+            prevPos_RLEG  = motionProxy.getPosition("RLeg", space, useSensor)
+            prevPos_TORSO = motionProxy.getPosition("Torso", space, useSensor)
 
-        # Movement Vectors
-        pathList   =   [
-                        [ prevPos_LARM, nextPos_LARM ],    #LArm
-                        [ prevPos_RARM, nextPos_RARM ],    #RARM
-                        [ prevPos_TORSO, nextPos_TORSO ],  #TORSO
-                        [ prevPos_HEAD, nextPos_HEAD ],    #HEAD
-                        [ prevPos_RLEG, nextPos_RLEG ],    #RLEG
-                        [ prevPos_LLEG, nextPos_LLEG ],    #LLEG
-                       ]
+            # Movement Vectors
+            #pathList   =   [
+            #                [ prevPos_HEAD, nextPos_HEAD ],    #HEAD
+            #                [ prevPos_LARM, nextPos_LARM ],    #LArm
+            #                [ prevPos_LLEG, nextPos_LLEG ],    #LLEG
+            #                [ prevPos_RARM, nextPos_RARM ],    #RARM
+            #                [ prevPos_RLEG, nextPos_RLEG ],    #RLEG
+            #                [ prevPos_TORSO, nextPos_TORSO ]   #TORSO
+            #               ]
+            pathList   =   [
+                            [ prevPos_HEAD, prevPos_HEAD ],    #HEAD
+                            [ prevPos_LARM, prevPos_LARM ],    #LArm
+                            [ prevPos_LLEG, prevPos_LLEG ],    #LLEG
+                            [ prevPos_RARM, prevPos_RARM ],    #RARM
+                            [ prevPos_RLEG, prevPos_RLEG ],    #RLEG
+                            [ prevPos_TORSO, prevPos_TORSO ]   #TORSO
+                           ]
 
-        #Convert array Times to Times List
-        timeList = timeArray.tolist()
-
-        #Move NAO
-        motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeList, isAbsolute)
-
-        #Times List Vectors
-        timeArray += 1.0
+            #Move NAO
+            motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)
+                                                                                            #Needs timeList
+            print(pathList)
+            #Times List Vectors
+            timeArray += 1.0
+        #If not collected all 6 effectors vector lists
+        else:
+            index += 1
 
     #Posicion de reposo
     postureProxy.goToPosture("Crouch", 0.5)
