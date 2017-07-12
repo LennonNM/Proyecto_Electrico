@@ -31,8 +31,8 @@ def main(robotIP):
 
     # Motion SetUp
     space        = motion.FRAME_TORSO
-    isAbsolute   = True
-    useSensor    = False
+    isAbsolute   = False
+    useSensor    = True
 
     #Starts motors and goes to init position
     motionProxy.wakeUp()
@@ -84,22 +84,15 @@ def main(robotIP):
             prevPos_TORSO = motionProxy.getPosition("Torso", space, useSensor)
 
             # Movement Vectors
-            #pathList   =   [
-            #                [ prevPos_HEAD, nextPos_HEAD ],    #HEAD
-            #                [ prevPos_LARM, nextPos_LARM ],    #LArm
-            #                [ prevPos_LLEG, nextPos_LLEG ],    #LLEG
-            #                [ prevPos_RARM, nextPos_RARM ],    #RARM
-            #                [ prevPos_RLEG, nextPos_RLEG ],    #RLEG
-            #                [ prevPos_TORSO, nextPos_TORSO ]   #TORSO
-            #               ]
             pathList   =   [
-                            [ prevPos_HEAD, prevPos_HEAD ],    #HEAD
-                            [ prevPos_LARM, prevPos_LARM ],    #LArm
-                            [ prevPos_LLEG, prevPos_LLEG ],    #LLEG
-                            [ prevPos_RARM, prevPos_RARM ],    #RARM
-                            [ prevPos_RLEG, prevPos_RLEG ],    #RLEG
-                            [ prevPos_TORSO, prevPos_TORSO ]   #TORSO
+                            [ prevPos_HEAD, nextPos_HEAD ],    #HEAD
+                            [ prevPos_LARM, nextPos_LARM ],    #LArm
+                            [ prevPos_LLEG, nextPos_LLEG ],    #LLEG
+                            [ prevPos_RARM, nextPos_RARM ],    #RARM
+                            [ prevPos_RLEG, nextPos_RLEG ],    #RLEG
+                            [ prevPos_TORSO, nextPos_TORSO ]   #TORSO
                            ]
+
 
             #Move NAO
             motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)

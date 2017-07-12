@@ -59,7 +59,7 @@ def main(robotIP):
 
 if __name__ == "__main__":
     #robotIp = "192.168.18.214"
-    robotIp = "10.0.1.154"
+    robotIp = "10.0.1.128"
     if len(sys.argv) <= 1:
         print "Usage python almotion_positioninterpolations.py robotIP (optional default: 127.0.0.1)"
     else:
