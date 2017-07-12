@@ -31,11 +31,13 @@ def main(robotIP):
 
     # Motion SetUp
     space        = motion.FRAME_TORSO
-    isAbsolute   = False
-    useSensor    = True
+    #space = motion.FRAME_ROBOT
+    isAbsolute   = True #Absolute coordinates for effectors
+    useSensor    = False
 
     #Starts motors and goes to init position
     motionProxy.wakeUp()
+    motionProxy.setStiffnesses("Body", 1.0)
 
     #Body effectors to Use
     #  Head, LArm, LLeg, RLeg, RArm, Torso
@@ -44,16 +46,27 @@ def main(robotIP):
     origin = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
 
     # Motion of Arms and Torso with block process
-    effectorList = [ "Head", "LArm", "LLeg", "RLeg", "RArm", "Torso" ] #Order of effectors to receive vectors on setPositionInterpolations
-    axisMaskList = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL,
-                    motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
+    #effectorList = [ "Head", "LArm", "LLeg", "RLeg", "RArm", "Torso" ] #Order of effectors to receive vectors on setPositionInterpolations
+    #axisMaskList = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL,
+    #                motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL ]
+    effectorList = [ "Head", "LArm", "RArm" ] #Order of effectors to receive vectors on setPositionInterpolations
+    axisMaskList = [ motion.AXIS_MASK_ALL ]
 
     # Initial Time List
-    timeArray = numpy.array( [[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]] ) #seconds
+    #timeArray = numpy.array( [[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]] ) #seconds
+    timeArray = numpy.array ([ [1.0, 2.0], [1.0, 2.0], [1.0, 2.0] ])
 
     #Coordinates process from file
-    coordinate = open("coordinates.txt", "r") #Open text file
     index = 0
+    coordinate = open("coordinates.txt", "r") #Open text file
+
+    #For initial movement after StanInit
+    prevPos_HEAD  = [0.0, 0.0, 0.0, 0.0, 0.0, 0.3]
+    prevPos_LARM  = [0.12, 0.12, 0.0, 0.0, 0.0, 0.0]
+    prevPos_LLEG  = [0.12, 0.12, 0.0, 0.0, 0.0, 0.0]
+    prevPos_RLEG  = [0.12, 0.12, 0.0, 0.0, 0.0, 0.0]
+    prevPos_RARM  = [0.12, -0.12, 0.0, 0.0, 0.0, 0.0]
+    prevPos_TORSO = [0.12, 0.12, 0.0, 0.0, 0.0, 0.0]
 
     for line in coordinate.readlines():
         #Assign Coordinates to respective effector vector
@@ -76,30 +89,41 @@ def main(robotIP):
             index = 0
 
             #Get Previous Positions
-            prevPos_HEAD  = motionProxy.getPosition("Head", space, useSensor)
-            prevPos_LARM  = motionProxy.getPosition("LArm", space, useSensor)
-            prevPos_LLEG  = motionProxy.getPosition("LLeg", space, useSensor)
-            prevPos_RARM  = motionProxy.getPosition("RArm", space, useSensor)
-            prevPos_RLEG  = motionProxy.getPosition("RLeg", space, useSensor)
-            prevPos_TORSO = motionProxy.getPosition("Torso", space, useSensor)
+            #prevPos_HEAD  = motionProxy.getPosition("Head", space, useSensor)
+            #prevPos_LARM  = motionProxy.getPosition("LArm", space, useSensor)
+            #prevPos_LLEG  = motionProxy.getPosition("LLeg", space, useSensor)
+            #prevPos_RLEG  = motionProxy.getPosition("RLeg", space, useSensor)
+            #prevPos_RARM  = motionProxy.getPosition("RArm", space, useSensor)
+            #prevPos_TORSO = motionProxy.getPosition("Torso", space, useSensor)
 
             # Movement Vectors
-            pathList   =   [
-                            [ prevPos_HEAD, nextPos_HEAD ],    #HEAD
-                            [ prevPos_LARM, nextPos_LARM ],    #LArm
-                            [ prevPos_LLEG, nextPos_LLEG ],    #LLEG
-                            [ prevPos_RARM, nextPos_RARM ],    #RARM
-                            [ prevPos_RLEG, nextPos_RLEG ],    #RLEG
-                            [ prevPos_TORSO, nextPos_TORSO ]   #TORSO
-                           ]
+            #pathList   =   [
+            #                [ prevPos_HEAD, nextPos_HEAD ],    #HEAD
+            #                [ prevPos_LARM, nextPos_LARM ],    #LArm
+            #                [ prevPos_LLEG, nextPos_LLEG ],    #LLEG
+            #                [ prevPos_RLEG, nextPos_RLEG ],    #RLEG
+            #                [ prevPos_RARM, nextPos_RARM ],    #RARM
+            #                [ prevPos_TORSO, nextPos_TORSO ]   #TORSO
+            #               ]
+            #pathList = [ prevPos_TORSO, nextPos_TORSO ]
 
+            pathList = [ [prevPos_HEAD, nextPos_HEAD], [prevPos_LARM, nextPos_LARM], [prevPos_RARM, nextPos_RARM] ]
 
-            #Move NAO
+            prevPos_HEAD  = nextPos_HEAD
+            prevPos_LARM  = nextPos_LARM
+            prevPos_LLEG  = nextPos_LLEG
+            prevPos_RLEG  = nextPos_RLEG
+            prevPos_RARM  = nextPos_RARM
+            prevPos_TORSO = nextPos_TORSO
+
+            #Move NAO (Needs timeList)
+            #motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)
             motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)
-                                                                                            #Needs timeList
-            print(pathList)
+
+            #Frames per second
+            time.sleep(1)
             #Times List Vectors
-            timeArray += 1.0
+            timeArray += 2.0
         #If not collected all 6 effectors vector lists
         else:
             index += 1
@@ -107,14 +131,12 @@ def main(robotIP):
     #Posicion de reposo
     postureProxy.goToPosture("Crouch", 0.5)
     motionProxy.rest() #Rest the NAO motors
+    motionProxy.setStiffnesses("Body", 0.0)
 
     coordinate.close() #Close text file and free resources
 
 
 if __name__ == "__main__":
-    #robotIp = "192.168.18.214"
-    #robotIp = "10.0.1.154"
-    #robotIp = "169.254.113.113"
     robotIp = "10.0.1.128"
 
     if len(sys.argv) <= 1:

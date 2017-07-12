@@ -37,25 +37,33 @@ def main(robotIP):
                                  axisMaskList, timeList, isAbsolute)
 
     # Motion of Arms and Torso with block process
-    effectorList = ["LArm", "RArm", "Torso"]
-    axisMaskList = [motion.AXIS_MASK_VEL,
-                    motion.AXIS_MASK_VEL,
-                    motion.AXIS_MASK_ALL]
-    timeList    = [[4.0],
-                    [4.0],
-                    [1.0, 2.0, 3.0, 4.0]] # seconds
+    effectorList = ["Torso"]
+    axisMaskList = [ motion.AXIS_MASK_ALL]
+    #timeList    = [[4.0],
+    #                [4.0],
+    #                [1.0, 2.0, 3.0, 4.0]] # seconds
+    timeList    = [[1.0, 2.0]] # seconds
     dx           = 0.03                   # translation axis X (meters)
     dy           = 0.04                   # translation axis Y (meters)
-    pathList     = [[[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
-                    [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
-                    [[0.0, +dy, 0.0, 0.0, 0.0, 0.0], # point 1
-                     [-dx, 0.0, 0.0, 0.0, 0.0, 0.0], # point 2
-                     [0.0, -dy, 0.0, 0.0, 0.0, 0.0], # point 3
-                     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]] # point 4
+    pathList     = [  [[0.0, +dy, 0.0, 0.0, 0.0, 0.0], # point 1
+                     [-dx, 0.0, 0.0, 0.0, 0.0, 0.0]] # point 2
                    ]
+    #print(pathList[2])
+    prevPos_TORSO = motionProxy.getPosition("Torso", space, True)
+    print(prevPos_TORSO)
     motionProxy.positionInterpolations(effectorList, space, pathList,
                                  axisMaskList, timeList, isAbsolute)
 
+    timeList2    = [[2.0, 3.0]] # seconds
+    pathList2     = [[[0.0, -dy, 0.0, 0.0, 0.0, 0.0], # point 3
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]] # point 4
+                   ]
+    #print(pathList2[2])
+
+    motionProxy.positionInterpolations(effectorList, space, pathList2,
+                             axisMaskList, timeList2, isAbsolute)
+    prevPos_TORSO = motionProxy.getPosition("Torso", space, True)
+    print(prevPos_TORSO)
 
 if __name__ == "__main__":
     #robotIp = "192.168.18.214"
