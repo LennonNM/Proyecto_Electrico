@@ -35,12 +35,12 @@ def main(robotIP):
 #---------------------------------------------------------
 #Control del movimiento del NAO
 
-    
+
 
 
 if __name__ == "__main__":
-    #robotIp = "10.0.1.128" #Bato
-    robotIp = "10.0.1.193" #Mok
+    robotIp = "10.0.1.128" #Bato en PRISNAO Network
+    #robotIp = "10.0.1.193" #Mok en PRISNAO Network
 
     if len(sys.argv) <= 1:
         print "Usage python almotion_positioninterpolations.py robotIP (optional default: 127.0.0.1)"
