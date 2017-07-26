@@ -118,7 +118,7 @@ def main(robotIP):
 
             #Move NAO (Needs timeList)
             #motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)
-            motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)
+    #        motionProxy.positionInterpolations(effectorList, space, pathList, axisMaskList, timeArray.tolist(), isAbsolute)
 
             #Frames per second
             time.sleep(1)
@@ -129,7 +129,7 @@ def main(robotIP):
             index += 1
 
     #Posicion de reposo
-    postureProxy.goToPosture("Crouch", 0.5)
+    #postureProxy.goToPosture("Crouch", 0.5)
     motionProxy.rest() #Rest the NAO motors
     motionProxy.setStiffnesses("Body", 0.0)
 
@@ -137,8 +137,8 @@ def main(robotIP):
 
 
 if __name__ == "__main__":
-    #robotIp = "10.0.1.128" #Bato
-    robotIp = "10.0.1.193"
+    robotIp = "10.0.1.128" #Bato
+    #robotIp = "10.0.1.193"
 
     if len(sys.argv) <= 1:
         print "Usage python almotion_positioninterpolations.py robotIP (optional default: 127.0.0.1)"

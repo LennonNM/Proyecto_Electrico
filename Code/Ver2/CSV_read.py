@@ -33,7 +33,7 @@ for i, item in enumerate(filasActuadores) :
         marcador = str(item)
         actuadores[j] = marcador[10::]
         j+=1
-
+print actuadores
 ##Obtencion datos de posiciones, estas se muestran hasta la fila 7 (iniciando cuenta en 0)
 ##incluyen numero de cuadro, tiempo en segundos y coordenadas XYZ en orden segun los
 ##actuadores obtenidos
@@ -99,10 +99,10 @@ for i, item in enumerate(filasCoordenadas) :
             elif contActuador == 6 :
                 actuador6.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                 contActuador=1
-
-print actuador6
-
-#print len(coordenadas[0])
+#En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada
+#actuador independiente, en el orden segun el archivo CSV
+##Generando Vector completo como lista de vectores para cada actuador
+coordenadasCompletas = [actuador1, actuador2, actuador3, actuador4, actuador5, actuador6]
 
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
@@ -112,8 +112,8 @@ def getActuadores() :
 
 ##Devuelve posiciones X,Y,Z en orden correspondiente a los actuadores obtenidos
 def getCoordenadas():
-    return filasCoordenadas
+    return coordenadasCompletas
 
 ##Devuelve lista de Tiempos del movimiento
-def getCoordenadas():
+def getTiempos():
     return tiempos
