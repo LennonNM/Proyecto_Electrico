@@ -9,7 +9,8 @@ from os.path import dirname, abspath
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
 archivo = os.path.join(rootDir, "Posiciones_Para_Datos/Frame_Robot/")
-archivo = os.path.join(archivo, "pruebaA.csv")
+#archivo = os.path.join(archivo, "pruebaA.csv")
+archivo = os.path.join(archivo, "Probando.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo
@@ -33,13 +34,13 @@ for i, item in enumerate(filasActuadores) :
         marcador = str(item)
         actuadores[j] = marcador[10::]
         j+=1
-print actuadores
+
 ##Obtencion datos de posiciones, estas se muestran hasta la fila 7 (iniciando cuenta en 0)
 ##incluyen numero de cuadro, tiempo en segundos y coordenadas XYZ en orden segun los
 ##actuadores obtenidos
 filasCoordenadas = filasIniciales[7::]
 
-###Eliminado del elemento numero de cuadro
+###Eliminado numero de cuadro
 for i,item in enumerate(filasCoordenadas) :
     del filasCoordenadas[i][0]
 
@@ -51,8 +52,9 @@ for i,item in enumerate(filasCoordenadas) :
 ###Ordenando coordenadas para generar lista de posiciones XYZ segun el orden de los actuadores
 contXYZ = 0
 contActuador = 1
-trioXYZ = [None]*3 #XYZ+rotacion
-trioXYZ.extend([0.0,0.0,0.0])
+basura = 0
+trioXYZ = [0.0,0.0,0.0,0.0,0.0,0.0] #XYZ+rotacion
+#trioXYZ.extend([0.0,0.0,0.0])
 trioTemp = trioXYZ #Temporal por si se pierde la informacion del marcador
 ####Manejando cada actuador con su propia lista de posiciones
 actuador1 = list()
@@ -62,47 +64,77 @@ actuador4 = list()
 actuador5 = list()
 actuador6 = list()
 for i, item in enumerate(filasCoordenadas) :
-    contActuador = 1 #Reinicia contador de actuador cada vez que carga fila nueva
+    #contActuador = 1 #Reinicia contador de actuador cada vez que carga fila nueva
     for contTrio in range(0,18) : #3 ejes * 6 actuadores
         if contXYZ < 2 :
             if filasCoordenadas[i][0] == '' : #Revisa si se perdio el marcador
                 #En caso de posicion faltante se pasa el valor obtenidos
                 #del cuadro anterior con posicion valida
+                basura = filasCoordenadas.pop(0) #Saca valor vacio de la lista
                 trioXYZ[contXYZ] = trioTemp[contXYZ]
             else :
                 trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
-                trioTemp[contXYZ] = trioXYZ[contXYZ]
-                contXYZ+=1
+                #trioTemp[contXYZ] = trioXYZ[contXYZ]
+            contXYZ+=1
         elif contXYZ == 2 :
             if filasCoordenadas[i][0] == '' :
                 trioXYZ[contXYZ] = trioTemp[contXYZ]
+                filasCoordenadas.pop(0)
             else :
                 trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
-                contXYZ=0
-                trioTemp[contXYZ] = trioXYZ[contXYZ]
+            contXYZ=0
+                #trioTemp[contXYZ] = trioXYZ[contXYZ]
             #Se tienen XYZ+rot para un actuador en un cuadro especifico
+            ### Z e Y estan invertidos en el marco de referencia del MoCap
+            ### rotaciones en 0.0
             if contActuador == 1 :
-                actuador1.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                actuador1.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             elif contActuador == 2 :
-                actuador2.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                actuador2.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             elif contActuador == 3 :
-                actuador3.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                actuador3.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             elif contActuador == 4 :
-                actuador4.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                actuador4.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             elif contActuador == 5 :
-                actuador5.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                actuador5.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             elif contActuador == 6 :
-                actuador6.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                actuador6.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador=1
+
 #En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada
 #actuador independiente, en el orden segun el archivo CSV
 ##Generando Vector completo como lista de vectores para cada actuador
-coordenadasCompletas = [actuador1, actuador2, actuador3, actuador4, actuador5, actuador6]
+#coordenadasCompletas = [actuador1, actuador2, actuador3, actuador4, actuador5, actuador6]
+coordenadasCompletas = [actuador1, actuador4, actuador5, actuador6] #Sin piernas para usar FRAME.ROBOT
+print len(coordenadasCompletas[0])
+
+#Eliminando filas con tiempos muy cercanos y dejando solo aquellas con 1 decimal
+##Nuevas listas con datos filtrados
+tiemposAprox = [None]*(len(actuador1)/3+1)
+coordenadasFinales = [[[] for x in range(len(tiemposAprox))] for y in range(6)]
+j = 0
+for i,item in enumerate(tiempos) :
+    if (i < len(actuador1)) :
+        if (i%3 == 0) :
+            tiemposAprox[j] = tiempos[i]
+            coordenadasFinales[0][j] = coordenadasCompletas[0][i]
+            coordenadasFinales[1][j] = coordenadasCompletas[1][i]
+            coordenadasFinales[2][j] = coordenadasCompletas[2][i]
+            coordenadasFinales[3][j] = coordenadasCompletas[3][i]
+            #coordenadasFinales[4][j] = coordenadasCompletas[4][i] # sin dos actuadores-dos piernas
+            #coordenadasFinales[5][j] = coordenadasCompletas[5][i]
+            j+=1
+
+##Generando lista con 6 conjuntos de tiempos, uno por cada actuador
+#tiemposFinales = [[] for x in range(6)]
+tiemposFinales = [[] for x in range(4)] # vectores de tiempos excluyendo piernas
+for i, item in enumerate(tiemposFinales):
+    tiemposFinales[i] = tiemposAprox
 
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
@@ -112,8 +144,9 @@ def getActuadores() :
 
 ##Devuelve posiciones X,Y,Z en orden correspondiente a los actuadores obtenidos
 def getCoordenadas():
+    #return coordenadasFinales
     return coordenadasCompletas
 
 ##Devuelve lista de Tiempos del movimiento
 def getTiempos():
-    return tiempos
+    return tiemposFinales
