@@ -1,17 +1,20 @@
 # -*- encoding: UTF-8 -*-
-
+# imports
 import sys
 import time
 import numpy
 from naoqi import ALProxy
 import motion
+
 import CSV_read #Lectura de los .CSV
+
+#-------------------------------------------------------------------------------
 def main(robotIP):
-#---------------------------------------------------------
     #SetUp
     PORT = 9559
 
     try:
+        #Para poder utilizar funciones de movimiento de los actuadores del NAO
         motionProxy = ALProxy("ALMotion", robotIP, PORT)
     except Exception,e:
         print "Could not create proxy to ALMotion"
@@ -19,63 +22,71 @@ def main(robotIP):
         sys.exit(1)
 
     try:
+        #Para utilizar posiciones preestablecidas del NAO
         postureProxy = ALProxy("ALRobotPosture", robotIP, PORT)
     except Exception, e:
         print "Could not create proxy to ALRobotPosture"
         print "Error was: ", e
 
-#---------------------------------------------------------
+#-------------------------------------------------------------------------------
+#Inicializacion de parametros necesarios para el movimiento del NAO
 
-    # Send NAO to Pose Init for Safety
-    #postureProxy.goToPosture("StandInit", 0.5)
+    ##Marco de Referencia a utiliza
+    #referencia = motion.FRAME_TORSO #Referencia centro del Torso
+    referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
 
-    # Motion SetUp
-    referencia        = motion.FRAME_TORSO
-    #space = motion.FRAME_ROBOT
-    absolutos   = True #Absolute coordinates for effectors
-    useSensor    = False
-    axisMask = [ motion.AXIS_MASK_VEL ]
+    ##Relacion coordenadas con marco de referencia
+    absolutos = True #True para usar coordenadas absolutas respecto al marco de referencia
+    useSensor = False #Usar sensores para ubicar los actuadores
 
-    #Starts motors and goes to init position
-    motionProxy.wakeUp()
-    motionProxy.setStiffnesses("Body", 1.0)
+    ##Grados de libertad a utilizar
+    #axisMask = [ motion.AXIS_MASK_ALL ] #Control de posicion XYZ y rotacion
+    axisMask = [ motion.AXIS_MASK_VEL ] #Control de posicion XYZ
 
-#Lista de Tiempos
-    listaTiempos = CSV_read.getTiempos()
-    print listaTiempos
-
-    ##Lista de Actuadores en el orden a ser usadas
-    listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
+#-------------------------------------------------------------------------------
+#Obtencion de la informacion del archivo CVS
 
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
     listaCoordenadas = CSV_read.getCoordenadas()
 
-    #-------------------------------------------------------------------------------
-    #Control del movimiento del NAO
+    ##Lista de Tiempos
+    #listaTiempos = CSV_read.getTiempos
+
+    coef = 0.1
+    listaTiempos  = [ [coef*(i+1) for i in range(len(listaCoordenadas[0]))],
+                        [coef*(i+1) for i in range(len(listaCoordenadas[1]))],
+                        [coef*(i+1) for i in range(len(listaCoordenadas[2]))],
+                        [coef*(i+1) for i in range(len(listaCoordenadas[3]))]
+                    ]
+
+    #print listaCoordenadas[0][0][0]
+    ##Lista de Actuadores en el orden a ser usadas
+    #listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
+    listaActuadores = ["RArm", "LArm", "Torso", "Head"]
+
+#-------------------------------------------------------------------------------
+#Control del movimiento del NAO
 
     ##Iniciando motores y activando rigidez para poder iniciar el movimiento en el NAO
-    motionProxy.wakeUp()
-    motionProxy.setStiffnesses("Body", 1.0)
+    #motionProxy.wakeUp()
+    #motionProxy.setStiffnesses("Body", 1.0)
 
     ##Llevando al NAO a una pose segura para moverse
-    postureProxy.goToPosture("StandInit", 0.5)
+    #postureProxy.goToPosture("StandInit", 0.5)
 
     ##Ejecucion de las posiciones obtenidas del archivo CSV_read
-    motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
+    #motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
 
-
-    #Posicion de reposo
+    ##Posicion de reposo
     #postureProxy.goToPosture("Crouch", 0.5)
-    motionProxy.rest() #Rest the NAO motors
-    motionProxy.setStiffnesses("Body", 0.0)
+    #motionProxy.rest() #Rest the NAO motors
+    #motionProxy.setStiffnesses("Body", 0.0)
 
-    coordinate.close() #Close text file and free resources
-
-
+#-------------------------------------------------------------------------------
 if __name__ == "__main__":
-    robotIp = "10.0.1.128" #Bato
-    #robotIp = "10.0.1.193"
+    robotIp = "10.0.1.128" #Bato PrisNao
+    #robotIp = "169.254.42.173" #Bato Local
 
     if len(sys.argv) <= 1:
         print "Usage python almotion_positioninterpolations.py robotIP (optional default: 127.0.0.1)"

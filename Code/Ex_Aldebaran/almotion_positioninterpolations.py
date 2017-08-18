@@ -30,7 +30,7 @@ def main(robotIP):
     # Motion of Arms with block process
     effectorList = ["LArm", "RArm"]
     axisMaskList = [motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL]
-    timeList     = [[1.0], [1.0]]         # seconds
+    timeList     = [[1.0], [2.0]]         # seconds
     pathList     = [[[0.0, -0.04, 0.0, 0.0, 0.0, 0.0]],
                     [[0.0,  0.04, 0.0, 0.0, 0.0, 0.0]]]
     motionProxy.positionInterpolations(effectorList, space, pathList,
