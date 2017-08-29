@@ -9,8 +9,8 @@ from os.path import dirname, abspath
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
 archivo = os.path.join(rootDir, "Posiciones_Para_Datos/Frame_Robot/")
-archivo = os.path.join(archivo, "pruebaA.csv")
-#archivo = os.path.join(archivo, "PruebaAnao.csv")
+#archivo = os.path.join(archivo, "pruebaA.csv")
+archivo = os.path.join(archivo, "PruebaAnao.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo
@@ -90,27 +90,27 @@ for i, item in enumerate(filasCoordenadas) :
             ### rotaciones en 0.0
             ### RArm
             if contActuador == 1 :
-                actuador1.append([(-1)*trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador1.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### RLeg
             elif contActuador == 2 :
-                actuador2.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador2.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### LLeg
             elif contActuador == 3 :
-                actuador3.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador3.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### LArm
             elif contActuador == 4 :
-                actuador4.append([(-1)*trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador4.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### Torso
             elif contActuador == 5 :
-                actuador5.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador5.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### Head
             elif contActuador == 6 :
-                actuador6.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador6.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
                 contActuador=1
 
 #En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada

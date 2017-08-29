@@ -42,12 +42,11 @@ def main(robotIP):
 
     ##Marco de Referencia a utiliza
     #referencia = motion.FRAME_TORSO #Referencia centro del Torso
-    referencia = motion.FRAME_WORLD #Referencia estado inicial del robot al iniciar animacion
-    #referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
+    #referencia = motion.FRAME_WORLD #Referencia estado inicial del robot al iniciar animacion
+    referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
 
     ##Relacion coordenadas con marco de referencia
     absolutos = False #True para usar coordenadas absolutas respecto al marco de referencia
-    useSensor = True #Usar sensores para ubicar los actuadores
 
     ##Grados de libertad a utilizar
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ] #Control de posicion XYZ y rotacion
@@ -91,12 +90,30 @@ def main(robotIP):
     #postureProxy.goToPosture("StandInit", 0.5)
     postureProxy.goToPosture("Stand", 0.5)
 
+    # Enable Whole Body Balancer
+    isEnabled  = True
+    motionProxy.wbEnable(isEnabled)
+
+    # Legs are constrained fixed
+    stateName  = "Fixed"
+    supportLeg = "Legs"
+    motionProxy.wbFootState(stateName, supportLeg)
+
+    # Constraint Balance Motion
+    isEnable   = True
+    supportLeg = "Legs"
+    motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
+
     ##Ejecucion de las posiciones obtenidas del archivo CSV_read
     motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
 
+    # Deactivate whole body
+    isEnabled    = False
+    motionProxy.wbEnable(isEnabled)
+
     ##Posicion de reposo
     postureProxy.goToPosture("Crouch", 0.5)
-    motionProxy.rest() #Rest the NAO motors
+    #motionProxy.rest() #Rest the NAO motors
     #motionProxy.setStiffnesses("Body", 0.0)
 
 #-------------------------------------------------------------------------------
