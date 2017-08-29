@@ -9,8 +9,8 @@ from os.path import dirname, abspath
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
 archivo = os.path.join(rootDir, "Posiciones_Para_Datos/Frame_Robot/")
-#archivo = os.path.join(archivo, "pruebaA.csv")
-archivo = os.path.join(archivo, "PruebaAnao.csv")
+archivo = os.path.join(archivo, "pruebaA.csv")
+#archivo = os.path.join(archivo, "PruebaAnao.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo
@@ -44,7 +44,7 @@ filasCoordenadas = filasIniciales[7::]
 for i,item in enumerate(filasCoordenadas) :
     del filasCoordenadas[i][0]
 
-###Generando lista de tiempos
+###Elimina columna de tiempos
 tiempos = [None]*len(filasCoordenadas)
 for i,item in enumerate(filasCoordenadas) :
     tiempos[i] = round(float(filasCoordenadas[i].pop(0)), 2)
@@ -90,58 +90,36 @@ for i, item in enumerate(filasCoordenadas) :
             ### rotaciones en 0.0
             ### RArm
             if contActuador == 1 :
-                actuador1.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
+                actuador1.append([(-1)*trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### RLeg
             elif contActuador == 2 :
-                actuador2.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
+                actuador2.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### LLeg
             elif contActuador == 3 :
-                actuador3.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
+                actuador3.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### LArm
             elif contActuador == 4 :
-                actuador4.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
+                actuador4.append([(-1)*trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### Torso
             elif contActuador == 5 :
-                actuador5.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
+                actuador5.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
                 contActuador+=1
             ### Head
             elif contActuador == 6 :
-                actuador6.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], 0.0, 0.0, 0.0])
+                actuador6.append([trioXYZ[0], trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
                 contActuador=1
 
 #En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada
 #actuador independiente, en el orden segun el archivo CSV
 ##Generando Vector completo como lista de vectores para cada actuador
 #coordenadasCompletas = [actuador1, actuador2, actuador3, actuador4, actuador5, actuador6]
-coordenadasCompletas = [actuador1, actuador4, actuador5, actuador6] #Sin piernas para usar FRAME.ROBOT
+#coordenadasCompletas = [actuador1, actuador4, actuador5, actuador6] #Sin piernas para usar FRAME.ROBOT
+coordenadasCompletas = [actuador1, actuador4, actuador5] #Sin piernas ni cabeza
 
-#Eliminando filas con tiempos muy cercanos y dejando solo aquellas con 1 decimal
-##Nuevas listas con datos filtrados
-#tiemposAprox = [None]*(len(actuador1)/3+1)
-#coordenadasFinales = [[[] for x in range(len(tiemposAprox))] for y in range(6)]
-#j = 0
-#for i,item in enumerate(tiempos) :
-#    if (i < len(actuador1)) :
-#        if (i%3 == 0) :
-#            tiemposAprox[j] = tiempos[i]
-#            coordenadasFinales[0][j] = coordenadasCompletas[0][i]
-#            coordenadasFinales[1][j] = coordenadasCompletas[1][i]
-#            coordenadasFinales[2][j] = coordenadasCompletas[2][i]
-#            coordenadasFinales[3][j] = coordenadasCompletas[3][i]
-            #coordenadasFinales[4][j] = coordenadasCompletas[4][i] # sin dos actuadores-dos piernas
-            #coordenadasFinales[5][j] = coordenadasCompletas[5][i]
-#            j+=1
-
-##Generando lista con 6 conjuntos de tiempos, uno por cada actuador
-#tiemposFinales = [[] for x in range(6)]
-#tiemposFinales = [[] for x in range(4)] # vectores de tiempos excluyendo piernas
-#for i, item in enumerate(tiemposFinales):
-#    tiemposFinales[i] = tiemposAprox
-#print tiemposFinales[0]
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
 ##Devuelve lista de actuadores en el CSV, con orden a usar

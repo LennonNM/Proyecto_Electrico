@@ -50,7 +50,7 @@ def main(robotIP):
 
     ##Grados de libertad a utilizar
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ] #Control de posicion XYZ y rotacion
-    axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, ] #Control de posicion XYZ
+    axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, ] #Control de posicion XYZ
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
@@ -62,21 +62,21 @@ def main(robotIP):
     ##Lista de Tiempos
     #listaTiempos = CSV_read.getTiempos
 
-    coef = 0.033333 # de acuerdo a tiempos de MoCap
-    #coef = 1
+    #Base de tiempo para cada vector de la animacion
+    #Debe ser mayor a 20 ms (tiempo que dura en resolver el balance de cuerpo completo)
+    #y dar al menos 30 ms entre cambios
+    #coef = 0.033333 # de acuerdo a tiempos de MoCap
+    coef = 0.05
     listaTiempos  = [ [coef*(i+1) for i in range(len(listaCoordenadas[0]))],
                         [coef*(i+1) for i in range(len(listaCoordenadas[1]))],
                         [coef*(i+1) for i in range(len(listaCoordenadas[2]))],
-                        [coef*(i+1) for i in range(len(listaCoordenadas[3]))],
-                        #[coef*(i+1) for i in range(len(listaCoordenadas[4]))],
-                        #[coef*(i+1) for i in range(len(listaCoordenadas[5]))]
+                        #[coef*(i+1) for i in range(len(listaCoordenadas[3]))],
                     ]
 
-    #print listaCoordenadas[0][0][0]
     ##Lista de Actuadores en el orden a ser usadas
     #listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
-    listaActuadores = ["RArm", "LArm", "Torso", "Head"] # sin piernas
-    #listaActuadores = ["RArm"]
+    #listaActuadores = ["RArm", "LArm", "Torso", "Head"] # sin piernas
+    listaActuadores = ["RArm", "LArm", "Torso"] # sin piernas ni cabeza
 
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO
@@ -90,30 +90,41 @@ def main(robotIP):
     #postureProxy.goToPosture("StandInit", 0.5)
     postureProxy.goToPosture("Stand", 0.5)
 
-    # Enable Whole Body Balancer
-    isEnabled  = True
-    motionProxy.wbEnable(isEnabled)
+    ##Habilita Balanceo de Cuerpo Completo
+    activarBalance = True
+    motionProxy.wbEnable(activarBalance)
 
-    # Legs are constrained fixed
-    stateName  = "Fixed"
-    supportLeg = "Legs"
-    motionProxy.wbFootState(stateName, supportLeg)
+    ##Restriccion de soporte para las piernas
+    ###Modo de restriccion
+    estadoPiernas  = "Fixed" # Piernas fijas en posicion
+    #estadoPiernas = "Plane" # Piernas sobre el plano
+    #estadoPiernas = "Free" # Piernas libres
+    ###Actuador de soporte
+    soportePiernas = "Legs" # Ambas piernas
+    ###Habilitador
+    soporteActivo = True
+    ###Habilita soporte de piernas con restricciones
+    motionProxy.wbFootState(estadoPiernas, soportePiernas)
 
-    # Constraint Balance Motion
-    isEnable   = True
-    supportLeg = "Legs"
-    motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
+    ##Habilita balance del cuerpo sobre el soporte definido
+    motionProxy.wbEnableBalanceConstraint(soporteActivo, soportePiernas)
+
+    ##Tiempo de espera para iniciar movimiento
+    time.sleep(1.0)
 
     ##Ejecucion de las posiciones obtenidas del archivo CSV_read
     motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
 
-    # Deactivate whole body
-    isEnabled    = False
-    motionProxy.wbEnable(isEnabled)
+    ##Tiempo de espera entre ultimo movimiento y estado de reposo del Nao
+    time.sleep(3.0)
+
+    ##Desactiva Balance de Cuerpo Completo **Debe ir al final del movimiento
+    activarBalance = False
+    motionProxy.wbEnable(activarBalance)
 
     ##Posicion de reposo
     postureProxy.goToPosture("Crouch", 0.5)
-    #motionProxy.rest() #Rest the NAO motors
+    motionProxy.rest() # Descansa los motores del Nao
     #motionProxy.setStiffnesses("Body", 0.0)
 
 #-------------------------------------------------------------------------------
