@@ -9,3 +9,13 @@ http://doc.aldebaran.com/2-1/naoqi/motion/control-cartesian-api.html#ALMotionPro
 http://forum.maratis3d.com/viewtopic.php?id=59
 http://www.dcs.shef.ac.uk/intranet/research/public/resmes/CS0111.pdf
 
+#Optirx
+https://pypi.python.org/pypi/optirx
+
+#NatNet User's Guide
+https://optitrack.com/public/documents/natnet-api-user-guide-2.10.0.pdf
+
+#OptiTrack Wiki
+http://v110.wiki.optitrack.com/index.php?title=OptiTrack_Documentation_Wiki
+
+
