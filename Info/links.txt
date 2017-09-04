@@ -19,3 +19,11 @@ https://optitrack.com/public/documents/natnet-api-user-guide-2.10.0.pdf
 http://v110.wiki.optitrack.com/index.php?title=OptiTrack_Documentation_Wiki
 
 
+#Balance Nao
+http://ii.tudelft.nl/naodoc/site_en/reddoc/motion/presentation_balance.html
+
+#Whole Body Motion
+http://ii.tudelft.nl/naodoc/site_en/reddoc/motion/presentation_wholeBodyMotion.html
+
+#Whole Body Motion
+https://www.cs.sfu.ca/~li/papers-on-line/JieLei-SP-2015.pdf
