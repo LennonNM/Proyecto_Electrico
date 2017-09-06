@@ -19,12 +19,12 @@ def main(robotIP):
         print "Error was: ",e
         sys.exit(1)
 
-    space = motion.FRAME_ROBOT
+    space = motion.FRAME_TORSO
     axisMask = [ motion.AXIS_MASK_VEL ]
     useSensorValues = False
 
     rowsCounter = 0
-    rows = 440
+    rows = 436
     posRArm = []
     posRLeg = []
     posLLeg = []
@@ -35,14 +35,20 @@ def main(robotIP):
     while (rowsCounter < rows):
 
         posRArm.append(motionProxy.getPosition("RArm", space, useSensorValues))
+        time.sleep(0.006)
         posRLeg.append(motionProxy.getPosition("RLeg", space, useSensorValues))
+        time.sleep(0.006)
         posLLeg.append(motionProxy.getPosition("LLeg", space, useSensorValues))
+        time.sleep(0.006)
         posLArm.append(motionProxy.getPosition("LArm", space, useSensorValues))
+        time.sleep(0.006)
         posTorso.append(motionProxy.getPosition("Torso", space, useSensorValues))
+        time.sleep(0.006)
         posHead.append(motionProxy.getPosition("Head", space, useSensorValues))
+        time.sleep(0.006)
 
         rowsCounter+=1
-        time.sleep(0.033333)
+        #time.sleep(0.033333)
 
     print "listo toma de datos"
 
