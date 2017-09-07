@@ -51,6 +51,7 @@ def main(robotIP):
     ##Grados de libertad a utilizar
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ] #Control de posicion XYZ y rotacion
     axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL ] #Control de posicion XYZ
+    #axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL ]
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
@@ -71,12 +72,14 @@ def main(robotIP):
                         [coef*(i+1) for i in range(len(listaCoordenadas[1]))],
                         [coef*(i+1) for i in range(len(listaCoordenadas[2]))],
                         #[coef*(i+1) for i in range(len(listaCoordenadas[3]))],
+                        #[coef*(i+1) for i in range(len(listaCoordenadas[4]))]
                     ]
 
     ##Lista de Actuadores en el orden a ser usadas
     #listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
     #listaActuadores = ["RArm", "LArm", "Torso", "Head"] # sin piernas
     listaActuadores = ["RArm", "LArm", "Torso"] # sin piernas ni cabeza
+    #listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso"]
 
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO
@@ -107,6 +110,9 @@ def main(robotIP):
     soporteActivo = True
     ###Habilita soporte de piernas con restricciones
     motionProxy.wbFootState(estadoPiernas, soportePiernas)
+    ###Para usar piernas con estados individuales
+    #motionProxy.wbFootState("Plane", "RLeg")
+    #motionProxy.wbFootState("Plane", "LLeg")
     ##Habilita balance del cuerpo sobre el soporte definido
     motionProxy.wbEnableBalanceConstraint(soporteActivo, soportePiernas)
 
