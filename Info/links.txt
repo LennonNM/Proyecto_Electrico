@@ -27,3 +27,6 @@ http://ii.tudelft.nl/naodoc/site_en/reddoc/motion/presentation_wholeBodyMotion.h
 
 #Whole Body Motion
 https://www.cs.sfu.ca/~li/papers-on-line/JieLei-SP-2015.pdf
+
+#NatNat Linux
+http://v110.wiki.optitrack.com/index.php?title=NatNet:_Sample_Projects#NatNet_Sample_Projects

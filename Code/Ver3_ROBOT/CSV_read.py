@@ -8,9 +8,11 @@ from os.path import dirname, abspath
 #Obtencion de directorio base
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
-archivo = os.path.join(rootDir, "Posiciones_Para_Datos/Frame_Robot/")
-archivo = os.path.join(archivo, "pruebaA.csv")
+#archivo = os.path.join(rootDir, "Posiciones_Para_Datos/Frame_Robot/")
+#archivo = os.path.join(archivo, "pruebaA.csv")
 #archivo = os.path.join(archivo, "NaoPruebaA.csv")
+archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
+archivo = os.path.join(archivo, "PruebaA.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo
@@ -28,11 +30,10 @@ filasActuadores = filasIniciales[3]
 filasActuadores.remove('')
 filasActuadores.remove('')
 j = 0
-actuadores = [None]*6
+listaActuadores = [None]*6
 for i, item in enumerate(filasActuadores) :
     if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
-        marcador = str(item)
-        actuadores[j] = marcador[10::]
+        listaActuadores[j] = str(item)
         j+=1
 
 ##Obtencion datos de posiciones, estas se muestran hasta la fila 7 (iniciando cuenta en 0)
@@ -116,16 +117,13 @@ for i, item in enumerate(filasCoordenadas) :
 #En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada
 #actuador independiente, en el orden segun el archivo CSV
 ##Generando Vector completo como lista de vectores para cada actuador
-#coordenadasCompletas = [actuador1, actuador2, actuador3, actuador4, actuador5, actuador6]
-#coordenadasCompletas = [actuador1, actuador4, actuador5, actuador6] #Sin piernas para usar FRAME.ROBOT
-coordenadasCompletas = [actuador1, actuador4, actuador5] #Sin piernas ni cabeza
-#coordenadasCompletas = [actuador1, actuador2, actuador3, actuador4, actuador5] # Sin cabeza
+coordenadasCompletas = [actuador6, actuador2, actuador4]
 
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
 ##Devuelve lista de actuadores en el CSV, con orden a usar
 def getActuadores() :
-    return actuadores
+    return listaActuadores
 
 ##Devuelve posiciones X,Y,Z en orden correspondiente a los actuadores obtenidos
 def getCoordenadas():

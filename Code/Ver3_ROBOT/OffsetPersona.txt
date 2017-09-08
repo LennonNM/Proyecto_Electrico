@@ -1,0 +1,8 @@
+RArm:
+RLeg
+LLeg
+LArm
+Torso
+Head
+BMarker: 0.21
+SMarker: 0.11

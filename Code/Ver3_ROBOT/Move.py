@@ -76,10 +76,7 @@ def main(robotIP):
                     ]
 
     ##Lista de Actuadores en el orden a ser usadas
-    #listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
-    #listaActuadores = ["RArm", "LArm", "Torso", "Head"] # sin piernas
     listaActuadores = ["RArm", "LArm", "Torso"] # sin piernas ni cabeza
-    #listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso"]
 
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO
