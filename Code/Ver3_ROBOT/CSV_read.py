@@ -8,10 +8,8 @@ from os.path import dirname, abspath
 #Obtencion de directorio base
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
-#archivo = os.path.join(rootDir, "Posiciones_Para_Datos/Frame_Robot/")
-#archivo = os.path.join(archivo, "pruebaA.csv")
-#archivo = os.path.join(archivo, "NaoPruebaA.csv")
-archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
+#archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
+archivo = os.path.join(rootDir, "Posiciones_Para_Datos/PERSONA_ROBOT/DATA/")
 archivo = os.path.join(archivo, "PruebaA.csv")
 
 #Creando objeto con contenido del archivo CSV
@@ -91,7 +89,7 @@ for i, item in enumerate(filasCoordenadas) :
             ### rotaciones en 0.0
             ### RArm
             if contActuador == 1 :
-                actuador1.append([((-1)*trioXYZ[0]*0.052), trioXYZ[2], trioXYZ[1], 0.0, 0.0, 0.0])
+                actuador1.append([(-0.4)*trioXYZ[0], (-1.5)*trioXYZ[2]-(0.4), 0.5*trioXYZ[1]-(0.2), 0.0, 0.0, 0.0])
                 contActuador+=1
             ### RLeg
             elif contActuador == 2 :

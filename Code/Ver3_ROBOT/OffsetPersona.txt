@@ -1,8 +1,10 @@
-RArm:
-RLeg
-LLeg
-LArm
-Torso
-Head
-BMarker: 0.21
-SMarker: 0.11
+X_RArm: X*(-0.4)+( 0.0)
+Y_RArm: Y*(-1.5)+(-0.4)
+Z_RArm: Z*( 0.5)+(-0.2)
+RLeg:
+LLeg:
+X_LArm: X*(-1.0)+(0.05)
+Torso:
+Head:
+Big Marker: 0.21
+Small Marker: 0.11
