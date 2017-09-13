@@ -51,7 +51,6 @@ def main(robotIP):
     ##Grados de libertad a utilizar
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ] #Control de posicion XYZ y rotacion
     axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL ] #Control de posicion XYZ
-    #axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL ]
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
@@ -120,7 +119,7 @@ def main(robotIP):
     motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
 
     ##Tiempo de espera entre ultimo movimiento y estado de reposo del Nao
-    time.sleep(3.0)
+    time.sleep(1.0)
 
     ##Desactiva Balance de Cuerpo Completo **Debe ir al final del movimiento
     activarBalance = False
