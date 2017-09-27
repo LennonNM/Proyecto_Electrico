@@ -19,7 +19,7 @@ def main(robotIP):
         print "Error was: ",e
         sys.exit(1)
 
-    space = motion.FRAME_TORSO
+    space = motion.FRAME_ROBOT
     axisMask = [ motion.AXIS_MASK_VEL ]
     useSensorValues = False
 

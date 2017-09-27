@@ -65,7 +65,7 @@ filasIniciales = [r for r in reader]
 f.close()
 
 #-------------------------------------------------------------------------------
-#Extrayendo informacion importante
+#Extrayendo informacion importante del archivo
 ##Obtencion del orden de aparicion de los marcadores(actuadores)
 filasActuadores = filasIniciales[3]
 ###Remueve primeros dos espacios siempre en blanco
@@ -77,6 +77,21 @@ for i, item in enumerate(filasActuadores) :
     if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
         listaActuadores[j] = str(item)
         j+=1
+
+ordenActuadores = [None]*6
+for i,item in enumerate(listaActuadores):
+    if item == "RArm":
+        ordenActuadores[i] = 1
+    elif item == "RLeg":
+        ordenActuadores[i] = 2
+    elif item == "LLeg":
+        ordenActuadores[i] = 3
+    elif item == "LArm":
+        ordenActuadores[i] = 4
+    elif item == "Torso":
+        ordenActuadores[i] = 5
+    elif item == "Head":
+        ordenActuadores[i] = 6
 
 ##Obtencion datos de posiciones, estas se muestran hasta la fila 7 (iniciando cuenta en 0)
 ##incluyen numero de cuadro, tiempo en segundos y coordenadas XYZ en orden segun los
@@ -94,18 +109,15 @@ for i,item in enumerate(filasCoordenadas) :
 
 ###Ordenando coordenadas para generar lista de posiciones XYZ segun el orden de los actuadores
 contXYZ = 0
-contActuador = 1
+contActuador = 0
 basura = 0
 trioXYZ = [0.0,0.0,0.0,0.0,0.0,0.0] #XYZ+rotacion
 #trioXYZ.extend([0.0,0.0,0.0])
 trioTemp = trioXYZ #Temporal por si se pierde la informacion del marcador
 ####Manejando cada actuador con su propia lista de posiciones
-actuador1 = list()
-actuador2 = list()
-actuador3 = list()
-actuador4 = list()
-actuador5 = list()
-actuador6 = list()
+actuador = [None]*6
+for i in range(len(listaActuadores)):
+    actuador[i] = list()
 
 for i, item in enumerate(filasCoordenadas) :
     #contActuador = 1 #Reinicia contador de actuador cada vez que carga fila nueva
@@ -117,7 +129,7 @@ for i, item in enumerate(filasCoordenadas) :
                 basura = filasCoordenadas.pop(0) #Saca valor vacio de la lista
                 trioXYZ[contXYZ] = trioTemp[contXYZ]
             else :
-                trioXYZ[contXYZ] = round(float(filasCoordenadas[i].pop(0)), 2)
+                trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
                 #trioTemp[contXYZ] = trioXYZ[contXYZ]
             contXYZ+=1
         elif contXYZ == 2 :
@@ -125,106 +137,32 @@ for i, item in enumerate(filasCoordenadas) :
                 trioXYZ[contXYZ] = trioTemp[contXYZ]
                 filasCoordenadas.pop(0)
             else :
-                trioXYZ[contXYZ] = round(float(filasCoordenadas[i].pop(0)), 2)
+                trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
             contXYZ=0
                 #trioTemp[contXYZ] = trioXYZ[contXYZ]
             #Se tienen XYZ+rot para un actuador en un cuadro especifico
             ### Z e Y estan invertidos en el marco de referencia del MoCap
             ### rotaciones en 0.0
-            if contActuador == 1 :
-                if listaActuadores[contActuador-1] == "RArm":
-                    actuador1.append([trioXYZ[0]*mx_RArm + bx_RArm, trioXYZ[2]*my_RArm + by_RArm, trioXYZ[1]*mz_RArm + bz_RArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "RLeg":
-                    actuador1.append([trioXYZ[0]*mx_RLeg + bx_RLeg, trioXYZ[2]*my_RLeg + by_RLeg, trioXYZ[1]*mz_RLeg + bz_RLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LLeg":
-                    actuador1.append([trioXYZ[0]*mx_LLeg + bx_LLeg, trioXYZ[2]*my_LLeg + by_LLeg, trioXYZ[1]*mz_LLeg + bz_LLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LArm":
-                    actuador1.append([trioXYZ[0]*mx_LArm + bx_LArm, trioXYZ[2]*my_LArm + by_LArm, trioXYZ[1]*mz_LArm + bz_LArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Torso":
-                    actuador1.append([trioXYZ[0]*mx_Torso + bx_Torso, trioXYZ[2]*my_Torso + by_Torso, trioXYZ[1]*mz_Torso + bz_Torso, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Head":
-                    actuador1.append([trioXYZ[0]*mx_Head + bx_Head, trioXYZ[2]*my_Head + by_Head, trioXYZ[1]*mz_Head + bz_Head, 0.0, 0.0, 0.0])
-                contActuador+=1
-
-            elif contActuador == 2 :
-                if listaActuadores[contActuador-1] == "RArm":
-                    actuador2.append([trioXYZ[0]*mx_RArm + bx_RArm, trioXYZ[2]*my_RArm + by_RArm, trioXYZ[1]*mz_RArm + bz_RArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "RLeg":
-                    actuador2.append([trioXYZ[0]*mx_RLeg + bx_RLeg, trioXYZ[2]*my_RLeg + by_RLeg, trioXYZ[1]*mz_RLeg + bz_RLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LLeg":
-                    actuador2.append([trioXYZ[0]*mx_LLeg + bx_LLeg, trioXYZ[2]*my_LLeg + by_LLeg, trioXYZ[1]*mz_LLeg + bz_LLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LArm":
-                    actuador2.append([trioXYZ[0]*mx_LArm + bx_LArm, trioXYZ[2]*my_LArm + by_LArm, trioXYZ[1]*mz_LArm + bz_LArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Torso":
-                    actuador2.append([trioXYZ[0]*mx_Torso + bx_Torso, trioXYZ[2]*my_Torso + by_Torso, trioXYZ[1]*mz_Torso + bz_Torso, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Head":
-                    actuador2.append([trioXYZ[0]*mx_Head + bx_Head, trioXYZ[2]*my_Head + by_Head, trioXYZ[1]*mz_Head + bz_Head, 0.0, 0.0, 0.0])
-                contActuador+=1
-
-            elif contActuador == 3 :
-                if listaActuadores[contActuador-1] == "RArm":
-                    actuador3.append([trioXYZ[0]*mx_RArm + bx_RArm, trioXYZ[2]*my_RArm + by_RArm, trioXYZ[1]*mz_RArm + bz_RArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "RLeg":
-                    actuador3.append([trioXYZ[0]*mx_RLeg + bx_RLeg, trioXYZ[2]*my_RLeg + by_RLeg, trioXYZ[1]*mz_RLeg + bz_RLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LLeg":
-                    actuador3.append([trioXYZ[0]*mx_LLeg + bx_LLeg, trioXYZ[2]*my_LLeg + by_LLeg, trioXYZ[1]*mz_LLeg + bz_LLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LArm":
-                    actuador3.append([trioXYZ[0]*mx_LArm + bx_LArm, trioXYZ[2]*my_LArm + by_LArm, trioXYZ[1]*mz_LArm + bz_LArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Torso":
-                    actuador3.append([trioXYZ[0]*mx_Torso + bx_Torso, trioXYZ[2]*my_Torso + by_Torso, trioXYZ[1]*mz_Torso + bz_Torso, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Head":
-                    actuador3.append([trioXYZ[0]*mx_Head + bx_Head, trioXYZ[2]*my_Head + by_Head, trioXYZ[1]*mz_Head + bz_Head, 0.0, 0.0, 0.0])
-                contActuador+=1
-
-            elif contActuador == 4 :
-                if listaActuadores[contActuador-1] == "RArm":
-                    actuador4.append([trioXYZ[0]*mx_RArm + bx_RArm, trioXYZ[2]*my_RArm + by_RArm, trioXYZ[1]*mz_RArm + bz_RArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "RLeg":
-                    actuador4.append([trioXYZ[0]*mx_RLeg + bx_RLeg, trioXYZ[2]*my_RLeg + by_RLeg, trioXYZ[1]*mz_RLeg + bz_RLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LLeg":
-                    actuador4.append([trioXYZ[0]*mx_LLeg + bx_LLeg, trioXYZ[2]*my_LLeg + by_LLeg, trioXYZ[1]*mz_LLeg + bz_LLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LArm":
-                    actuador4.append([trioXYZ[0]*mx_LArm + bx_LArm, trioXYZ[2]*my_LArm + by_LArm, trioXYZ[1]*mz_LArm + bz_LArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Torso":
-                    actuador4.append([trioXYZ[0]*mx_Torso + bx_Torso, trioXYZ[2]*my_Torso + by_Torso, trioXYZ[1]*mz_Torso + bz_Torso, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Head":
-                    actuador4.append([trioXYZ[0]*mx_Head + bx_Head, trioXYZ[2]*my_Head + by_Head, trioXYZ[1]*mz_Head + bz_Head, 0.0, 0.0, 0.0])
-                contActuador+=1
-
-            elif contActuador == 5 :
-                if listaActuadores[contActuador-1] == "RArm":
-                    actuador5.append([trioXYZ[0]*mx_RArm + bx_RArm, trioXYZ[2]*my_RArm + by_RArm, trioXYZ[1]*mz_RArm + bz_RArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "RLeg":
-                    actuador5.append([trioXYZ[0]*mx_RLeg + bx_RLeg, trioXYZ[2]*my_RLeg + by_RLeg, trioXYZ[1]*mz_RLeg + bz_RLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LLeg":
-                    actuador5.append([trioXYZ[0]*mx_LLeg + bx_LLeg, trioXYZ[2]*my_LLeg + by_LLeg, trioXYZ[1]*mz_LLeg + bz_LLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LArm":
-                    actuador5.append([trioXYZ[0]*mx_LArm + bx_LArm, trioXYZ[2]*my_LArm + by_LArm, trioXYZ[1]*mz_LArm + bz_LArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Torso":
-                    actuador5.append([trioXYZ[0]*mx_Torso + bx_Torso, trioXYZ[2]*my_Torso + by_Torso, trioXYZ[1]*mz_Torso + bz_Torso, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Head":
-                    actuador5.append([trioXYZ[0]*mx_Head + bx_Head, trioXYZ[2]*my_Head + by_Head, trioXYZ[1]*mz_Head + bz_Head, 0.0, 0.0, 0.0])
-                contActuador+=1
-
-            elif contActuador == 6 :
-                if listaActuadores[contActuador-1] == "RArm":
-                    actuador6.append([trioXYZ[0]*mx_RArm + bx_RArm, trioXYZ[2]*my_RArm + by_RArm, trioXYZ[1]*mz_RArm + bz_RArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "RLeg":
-                    actuador6.append([trioXYZ[0]*mx_RLeg + bx_RLeg, trioXYZ[2]*my_RLeg + by_RLeg, trioXYZ[1]*mz_RLeg + bz_RLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LLeg":
-                    actuador6.append([trioXYZ[0]*mx_LLeg + bx_LLeg, trioXYZ[2]*my_LLeg + by_LLeg, trioXYZ[1]*mz_LLeg + bz_LLeg, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "LArm":
-                    actuador6.append([trioXYZ[0]*mx_LArm + bx_LArm, trioXYZ[2]*my_LArm + by_LArm, trioXYZ[1]*mz_LArm + bz_LArm, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Torso":
-                    actuador6.append([trioXYZ[0]*mx_Torso + bx_Torso, trioXYZ[2]*my_Torso + by_Torso, trioXYZ[1]*mz_Torso + bz_Torso, 0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador-1] == "Head":
-                    actuador6.append([trioXYZ[0]*mx_Head + bx_Head, trioXYZ[2]*my_Head + by_Head, trioXYZ[1]*mz_Head + bz_Head, 0.0, 0.0, 0.0])
-                contActuador=1
+            if listaActuadores[contActuador] == "RArm":
+                actuador[contActuador].append([round(trioXYZ[0]*mx_RArm + bx_RArm, 2), round(trioXYZ[2]*my_RArm + by_RArm, 2), round(trioXYZ[1]*mz_RArm + bz_RArm, 2), 0.0, 0.0, 0.0])
+            elif listaActuadores[contActuador] == "RLeg":
+                actuador[contActuador].append([round(trioXYZ[0]*mx_RLeg + bx_RLeg, 2), round(trioXYZ[2]*my_RLeg + by_RLeg, 2), round(trioXYZ[1]*mz_RLeg + bz_RLeg, 2), 0.0, 0.0, 0.0])
+            elif listaActuadores[contActuador] == "LLeg":
+                actuador[contActuador].append([round(trioXYZ[0]*mx_LLeg + bx_LLeg, 2), round(trioXYZ[2]*my_LLeg + by_LLeg, 2), round(trioXYZ[1]*mz_LLeg + bz_LLeg, 2), 0.0, 0.0, 0.0])
+            elif listaActuadores[contActuador] == "LArm":
+                actuador[contActuador].append([round(trioXYZ[0]*mx_LArm + bx_LArm, 2), round(trioXYZ[2]*my_LArm + by_LArm, 2), round(trioXYZ[1]*mz_LArm + bz_LArm, 2), 0.0, 0.0, 0.0])
+            elif listaActuadores[contActuador] == "Torso":
+                actuador[contActuador].append([round(trioXYZ[0]*mx_Torso + bx_Torso, 2), round(trioXYZ[2]*my_Torso + by_Torso, 2), round(trioXYZ[1]*mz_Torso + bz_Torso, 2), 0.0, 0.0, 0.0])
+            elif listaActuadores[contActuador] == "Head":
+                actuador[contActuador].append([round(trioXYZ[0]*mx_Head + bx_Head, 2), round(trioXYZ[2]*my_Head + by_Head, 2), round(trioXYZ[1]*mz_Head + bz_Head, 2), 0.0, 0.0, 0.0])
+            contActuador+=1
+            if contActuador == 6:
+                contActuador = 0
 
 #En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada
 #actuador independiente, en el orden segun el archivo CSV
 ##Generando Vector completo como lista de vectores para cada actuador
-coordenadasCompletas = [actuador3, actuador4, actuador5]
+coordenadasCompletas = [actuador[2], actuador[3], actuador[4]]
 
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
@@ -238,5 +176,14 @@ def getCoordenadas():
     return coordenadasCompletas
 
 ##Devuelve lista de Tiempos del movimiento
-#def getTiempos():
-#    return tiemposFinales
+def getTiempos():
+    #Base de tiempo para cada vector de la animacion
+    #Debe ser mayor a 20 ms (tiempo que dura en resolver el balance de cuerpo completo)
+    #y dar al menos 30 ms entre cambios
+    #coef depende de los cuadros por segundo de la animacion en Motive
+    coef = 0.05
+    listaTiempos = [None]*len(coordenadasCompletas)
+    for i in range(len(coordenadasCompletas)):
+        listaTiempos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletas[i]))]
+
+    return listaTiempos

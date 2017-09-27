@@ -60,21 +60,10 @@ def main(robotIP):
     listaCoordenadas = CSV_read.getCoordenadas()
 
     ##Lista de Tiempos
-    #listaTiempos = CSV_read.getTiempos
-
-    #Base de tiempo para cada vector de la animacion
-    #Debe ser mayor a 20 ms (tiempo que dura en resolver el balance de cuerpo completo)
-    #y dar al menos 30 ms entre cambios
-    #coef = 0.033333 # de acuerdo a tiempos de MoCap
-    coef = 0.05
-    listaTiempos  = [ [coef*(i+1) for i in range(len(listaCoordenadas[0]))],
-                        [coef*(i+1) for i in range(len(listaCoordenadas[1]))],
-                        [coef*(i+1) for i in range(len(listaCoordenadas[2]))],
-                        #[coef*(i+1) for i in range(len(listaCoordenadas[3]))],
-                        #[coef*(i+1) for i in range(len(listaCoordenadas[4]))]
-                    ]
+    listaTiempos = CSV_read.getTiempos()
 
     ##Lista de Actuadores en el orden a ser usadas
+    ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
     listaActuadores = ["RArm", "LArm", "Torso"] # sin piernas ni cabeza
 
 #-------------------------------------------------------------------------------
@@ -114,9 +103,10 @@ def main(robotIP):
 
     ##Tiempo de espera para iniciar movimiento
     time.sleep(1.0)
-
+    for a in range(len(listaCoordenadas)-1):
     ##Ejecucion de las posiciones obtenidas del archivo CSV_read
-    motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
+        motionProxy.positionInterpolations(listaActuadores, referencia, [listaCoordenadas[0][a::a+1], listaCoordenadas[1][a::a+1], listaCoordenadas[2][a::a+1]],
+            axisMask, [listaTiempos[0][a::a+1], listaTiempos[1][a::a+1], listaTiempos[2][a::a+1]], absolutos)
 
     ##Tiempo de espera entre ultimo movimiento y estado de reposo del Nao
     time.sleep(1.0)
