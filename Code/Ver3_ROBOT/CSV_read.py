@@ -3,81 +3,89 @@ import csv
 import os
 from itertools import islice
 from os.path import dirname, abspath
-
 #-------------------------------------------------------------------------------
-#Coeficientes de Ajuste para valores del MoCap
+#-------------------------------------------------------------------------------
+#Coeficientes de Ajuste para valores del MoCap, considerando relacion lineal
+#entre datos del MoCap y datos del Nao
 ## RArm
 mx_RArm = -0.4
-bx_RArm = 0.0
+bx_RArm =  0.0
 my_RArm = -1.5
 by_RArm = -0.4
-mz_RArm = 0.5
-bz_RArm = -0.2
+mz_RArm =  0.4
+bz_RArm = -0.1
 ## RLeg
-mx_RLeg = -0.4
-bx_RLeg = 0.0
-my_RLeg = -1.5
-by_RLeg = -0.4
-mz_RLeg = 0.5
-bz_RLeg = -0.2
+mx_RLeg =  1.0
+bx_RLeg =  0.14
+my_RLeg =  1.0
+by_RLeg =  0.17
+mz_RLeg =  1.0
+bz_RLeg = -0.06
 ## LLeg
-mx_LLeg = -0.4
-bx_LLeg = 0.0
-my_LLeg = -1.5
-by_LLeg = -0.4
-mz_LLeg = 0.5
-bz_LLeg = -0.2
+mx_LLeg =  1.0
+bx_LLeg =  0.12
+my_LLeg =  1.0
+by_LLeg = -0.17
+mz_LLeg =  1.0
+bz_LLeg = -0.057
 ## LArm
 mx_LArm = -0.5
-bx_LArm = 0.05
-my_LArm = 0.5
-by_LArm = -0.05
-mz_LArm = 0.4
+bx_LArm =  0.05
+my_LArm = -0.4
+by_LArm = -0.25
+mz_LArm =  0.4
 bz_LArm = -0.1
 ## Torso
 mx_Torso = -0.1
-bx_Torso = 0.03
+bx_Torso = -0.03
 my_Torso = -0.1
 by_Torso = -0.012
-mz_Torso = 0.4
+mz_Torso =  0.4
 bz_Torso = -0.12
 ## Head
-mx_Head = -0.4
-bx_Head = 0.0
-my_Head = -1.5
-by_Head = -0.4
-mz_Head = 0.5
-bz_Head = -0.2
+mx_Head = -0.1
+bx_Head = -0.03
+my_Head = -0.1
+by_Head = -0.012
+mz_Head =  0.4
+bz_Head = -0.12
+#-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Obtencion de directorio base
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
 #archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
 archivo = os.path.join(rootDir, "Posiciones_Para_Datos/PERSONA_ROBOT/DATA/")
+#Nombre del archivo CSV a leer
 archivo = os.path.join(archivo, "PruebaA_2.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo
 f = open(archivo, 'rt')
-##Obteniendo datos completos
+##Obteniendo datos completos y cerrando archivo
 reader = csv.reader(f)
 filasIniciales = [r for r in reader]
 f.close()
 
 #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 #Extrayendo informacion importante del archivo
+
 ##Obtencion del orden de aparicion de los marcadores(actuadores)
 filasActuadores = filasIniciales[3]
 ###Remueve primeros dos espacios siempre en blanco
 filasActuadores.remove('')
 filasActuadores.remove('')
 j = 0
-listaActuadores = [None]*6
+listaActuadores = [None]*6 #Se trabaja con 6 marcadores
 for i, item in enumerate(filasActuadores) :
+    #Se repite el nombre del marcador 3 veces(XYZ)
     if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
         listaActuadores[j] = str(item)
         j+=1
 
+#Lista con el orden de  los marcadores para luego acomodarlos segun el orden
+#deseado (RArm, RLeg, LLeg, LArm, Torso, Head)
 ordenActuadores = [None]*6
 for i,item in enumerate(listaActuadores):
     if item == "RArm":
@@ -92,7 +100,7 @@ for i,item in enumerate(listaActuadores):
         ordenActuadores[i] = 5
     elif item == "Head":
         ordenActuadores[i] = 6
-
+#-------------------------------------------------------------------------------
 ##Obtencion datos de posiciones, estas se muestran hasta la fila 7 (iniciando cuenta en 0)
 ##incluyen numero de cuadro, tiempo en segundos y coordenadas XYZ en orden segun los
 ##actuadores obtenidos
@@ -163,27 +171,31 @@ for i, item in enumerate(filasCoordenadas) :
 #actuador independiente, en el orden segun el archivo CSV
 ##Generando Vector completo como lista de vectores para cada actuador
 coordenadasCompletas = [actuador[2], actuador[3], actuador[4]]
+#-------------------------------------------------------------------------------
+#Base de tiempo para cada vector de la animacion
+##Debe ser mayor a 20 ms (tiempo que dura en resolver el balance de cuerpo completo)
+##y dar al menos 30 ms entre cambios
+##coef depende de los cuadros por segundo de la animacion en Motive en el momento
+##de exportar los datos
+coef = 0.05
+listaTiempos = [None]*len(coordenadasCompletas)
+for i in range(len(coordenadasCompletas)):
+    listaTiempos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletas[i]))]
+    #Se maneja un vector de tiempos independiente para cada actuador, con longitud
+    #correspondiente a la lista con coordenadas respectivo
 
+#-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
 ##Devuelve lista de actuadores en el CSV, con orden a usar
 def getActuadores() :
     return listaActuadores
 
-##Devuelve posiciones X,Y,Z en orden correspondiente a los actuadores obtenidos
+##Devuelve posiciones X,Y,Z+rot en orden correspondiente a los actuadores obtenidos
 def getCoordenadas():
     #return coordenadasFinales
     return coordenadasCompletas
 
 ##Devuelve lista de Tiempos del movimiento
 def getTiempos():
-    #Base de tiempo para cada vector de la animacion
-    #Debe ser mayor a 20 ms (tiempo que dura en resolver el balance de cuerpo completo)
-    #y dar al menos 30 ms entre cambios
-    #coef depende de los cuadros por segundo de la animacion en Motive
-    coef = 0.05
-    listaTiempos = [None]*len(coordenadasCompletas)
-    for i in range(len(coordenadasCompletas)):
-        listaTiempos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletas[i]))]
-
     return listaTiempos
