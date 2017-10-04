@@ -80,6 +80,12 @@ def main(robotIP):
     ##Llevando al NAO a una pose segura para moverse
     #postureProxy.goToPosture("StandInit", 0.5)
     postureProxy.goToPosture("Stand", 0.5) #Pose preferente
+    ##Una vez que esta en una posicion segura se puede inhabilitar el contorlador
+    ##automatico de caidas, esto para que no restrinja ciertas posiciones del Nao
+    ### **Tener en cuenta que ahora corre peligro de caidas dañinas, el Nao Debe
+    ### estar en un ambiente controlado y el usuario atento a caidas para que
+    ### no sufra daños evitables**
+    motionProxy.setFallManagerEnabled(False)
 
     ##Habilita Balanceo de Cuerpo Completo Automatico
     activarBalance = True
@@ -111,16 +117,18 @@ def main(robotIP):
     ##Tiempo de espera para iniciar movimiento
     time.sleep(1.0)
     ##Ejecucion de las posiciones obtenidas del archivo CSV_read
-    #motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
-    for a in range(len(listaCoordenadas)-1):
+    motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
+    #for a in range(len(listaCoordenadas)-1):
 
-        motionProxy.positionInterpolations(listaActuadores, referencia, [listaCoordenadas[0][a::a+1], listaCoordenadas[1][a::a+1], listaCoordenadas[2][a::a+1]],
-            axisMask, [listaTiempos[0][a::a+1], listaTiempos[1][a::a+1], listaTiempos[2][a::a+1]], absolutos)
+    #    motionProxy.positionInterpolations(listaActuadores, referencia, [listaCoordenadas[0][a::a+1], listaCoordenadas[1][a::a+1], listaCoordenadas[2][a::a+1]],
+    #        axisMask, [listaTiempos[0][a::a+1], listaTiempos[1][a::a+1], listaTiempos[2][a::a+1]], absolutos)
 
     ##Tiempo de espera entre ultimo movimiento y estado de reposo del Nao, para
     ##agregar estabilidad
     time.sleep(1.0)
 
+    #Se habilita nuevamente el controlador automatico de caidas
+    motionProxy.setFallManagerEnabled(True)
     ##Desactiva Balance de Cuerpo Completo **Debe ir al final del movimiento**
     activarBalance = False
     motionProxy.wbEnable(activarBalance)

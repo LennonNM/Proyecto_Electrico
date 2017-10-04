@@ -10,8 +10,8 @@ from os.path import dirname, abspath
 ## RArm
 mx_RArm = -0.4
 bx_RArm =  0.0
-my_RArm = -1.5
-by_RArm = -0.4
+my_RArm = -0.3
+by_RArm = -0.23
 mz_RArm =  0.4
 bz_RArm = -0.1
 ## RLeg
@@ -29,17 +29,17 @@ by_LLeg = -0.17
 mz_LLeg =  1.0
 bz_LLeg = -0.057
 ## LArm
-mx_LArm = -0.5
+mx_LArm = -0.55
 bx_LArm =  0.05
-my_LArm = -0.4
-by_LArm = -0.25
+my_LArm =  0.4
+by_LArm = -0.03
 mz_LArm =  0.4
 bz_LArm = -0.1
 ## Torso
 mx_Torso = -0.1
 bx_Torso = -0.03
-my_Torso = -0.1
-by_Torso = -0.012
+my_Torso =  0.1
+by_Torso = -0.015
 mz_Torso =  0.4
 bz_Torso = -0.12
 ## Head
@@ -57,7 +57,7 @@ rootDir = dirname(dirname(abspath(__file__)))
 #archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
 archivo = os.path.join(rootDir, "Posiciones_Para_Datos/PERSONA_ROBOT/DATA/")
 #Nombre del archivo CSV a leer
-archivo = os.path.join(archivo, "PruebaA_2.csv")
+archivo = os.path.join(archivo, "PruebaA.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo
@@ -83,7 +83,7 @@ for i, item in enumerate(filasActuadores) :
     if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
         listaActuadores[j] = str(item)
         j+=1
-
+#print listaActuadores
 #Lista con el orden de  los marcadores para luego acomodarlos segun el orden
 #deseado (RArm, RLeg, LLeg, LArm, Torso, Head)
 ordenActuadores = [None]*6
@@ -193,7 +193,6 @@ def getActuadores() :
 
 ##Devuelve posiciones X,Y,Z+rot en orden correspondiente a los actuadores obtenidos
 def getCoordenadas():
-    #return coordenadasFinales
     return coordenadasCompletas
 
 ##Devuelve lista de Tiempos del movimiento
