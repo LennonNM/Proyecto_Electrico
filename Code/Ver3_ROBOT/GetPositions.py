@@ -24,10 +24,6 @@ def main(robotIP):
 
     #Marco de referencia para la obtencion de datos
     space = motion.FRAME_ROBOT
-    #Grados de libertad que se desean obtener
-    ## AXIS_MASK_ALL obtiene XYZ+rotacionXYZ
-    ## AXIS_MASK_VEL obtiene solo XYZ
-    axisMask = [ motion.AXIS_MASK_VEL ]
     #Uso de sensores adicionales para aproximar el estado del actuador
     useSensorValues = False
 #-------------------------------------------------------------------------------
