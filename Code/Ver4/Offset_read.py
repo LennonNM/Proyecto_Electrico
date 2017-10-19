@@ -14,24 +14,21 @@ from os.path import dirname, abspath
 ## ----------------------------
 ##Con cuantas filas se requiera segun actuadores y grados de libertad involucrados
 ##M y B son los parametros de la relacion lineal encontrada F = Eje*M + B
-
-#Creando objeto con contenido del archivo
-
-##Abriendo archivo
-archivo = "offsets.csv"
-f = open(archivo, 'rt')
-##Obteniendo datos completos y cerrando archivo
-reader = csv.reader(f)
-filas = [r for r in reader]
-f.close()
-
-##Borrando indicadores y dejando solo datos
-del filas[0]
-for i,item in enumerate(filas):
-    del filas[i][0]
-
-#-------------------------------------------------------------------------------
-#Interface
-
+#
+#Devuelve parametros de la relacion LINEAL
 def getLineal():
-    return filas    
+    #Creando objeto con contenido del archivo
+    ##Abriendo archivo
+    archivo = "offsets.csv"
+    f = open(archivo, 'rt')
+    ##Obteniendo datos completos y cerrando archivo
+    reader = csv.reader(f)
+    filas = [r for r in reader]
+    f.close()
+
+    ##Borrando indicadores y dejando solo datos
+    del filas[0]
+    for i,item in enumerate(filas):
+        del filas[i][0]
+
+    return filas

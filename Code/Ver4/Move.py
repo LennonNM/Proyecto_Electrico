@@ -53,12 +53,14 @@ def main(robotIP):
     ###Debe incluir un elemento por cada actuador a controlar
     #### AXIS_MASK_ALL controla XYZ y rotacion
     #### AXIS_MASK_VEL controla solo XYZ
-    #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
+    #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
     axisMask = [ motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL, motion.AXIS_MASK_VEL ]
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
 
+    #CSV_read.startRead("PruebaA.csv")
+    CSV_read.startRead()
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
     if (referencia == 2):
@@ -73,10 +75,7 @@ def main(robotIP):
 
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
-    #listaActuadores = CSV_read.getActuadores() #en caso de no querer usar orden
-                                                #preferente
-    #listaActuadores = ["RArm", "LArm", "Torso"] # sin piernas ni cabeza
-    listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
+    listaActuadores = CSV_read.getActuadores()
 
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO
@@ -104,15 +103,15 @@ def main(robotIP):
 
     ##Restriccion de soporte para las piernas
     ###Modo de restriccion
-    estadoFijo   = "Fixed" # Posicion Fija
+    estadoFijo  = "Fixed" # Posicion Fija
     estadoPlano = "Plane" # Permite desplazamiento sobre el plano
     estadoLibre = "Free"  # Libre movimiento en el espacio
     ###Actuador de soporte
     #### Legs usa ambas piernas, sin embargo se puede manejar la restriccion
     #### para cada pierna de manera independiente
     soportePiernas = "Legs" # Ambas piernas
-    soporteIzq = "LLeg" # Pierna izquierda
-    soporteDer = "RLeg" # Pierna derecha
+    soporteIzq     = "LLeg" # Pierna izquierda
+    soporteDer     = "RLeg" # Pierna derecha
 
     ###Habilita soporte de piernas con restricciones
     motionProxy.wbFootState(estadoFijo, soportePiernas)
@@ -155,9 +154,16 @@ if __name__ == "__main__":
     robotIp = "10.0.1.128" #Bato por red PrisNao
     #robotIp = "169.254.42.173" #Bato Local
 
-    if len(sys.argv) <= 1:
-        print "Usage python almotion_positioninterpolations.py robotIP (optional default: 127.0.0.1)"
+    if len(sys.argv) <= 2:
+        coreo = sys.argv[1]
+        print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
+        print "Choreograph file to read:", coreo
     else:
-        robotIp = sys.argv[1]
+        coreo = sys.argv[1]
+        robotIp = sys.argv[2]
+        print "Using robot IP:", robotIp
+        print "Choreograph file to read:", coreo
+
+    time.sleep(1.0) #Tiempo para que se lean las indicaciones
 
     main(robotIp)
