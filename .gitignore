@@ -1,0 +1,12 @@
+#No images ni videos
+*.jpg
+*.PNG
+*.jpeg
+*.psd
+*.mp4
+
+#Ignorar directorio de imagenes
+**/IMG
+
+#Archivos generados que no son codigo fuente
+*.pyc
