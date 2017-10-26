@@ -10,3 +10,6 @@
 
 #Archivos generados que no son codigo fuente
 *.pyc
+
+#PDF's
+*.pdf
