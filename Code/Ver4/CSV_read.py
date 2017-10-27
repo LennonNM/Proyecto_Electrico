@@ -13,7 +13,7 @@ coordenadasCompletasROBOT = list()
 coordenadasCompletasTORSO = list()
 #Inicia el procesamiento de los archivos CSV necesarios para el ajuste de datos
 #Recibe como parametro el nombre del archivo CSV con las coordenadas a leer
-def startRead():
+def startRead(nombreArchivo=None):
     #Coeficientes de Ajuste para valores del MoCap, considerando relacion lineal
     #entre datos del MoCap y datos del Nao
     ##Lectura del archivo con los parametros
@@ -71,7 +71,7 @@ def startRead():
     #archivo = os.path.join(archivo, nombreArchivo)
     archivo = os.path.join(rootDir, "Posiciones_Para_Datos/PERSONA_ROBOT/DATA/")
     #Nombre del archivo CSV a leer
-    archivo = os.path.join(archivo, "PruebaA.csv")
+    archivo = os.path.join(archivo, "PruebaE.csv")
 
     #Creando objeto con contenido del archivo CSV
     ##Abriendo archivo

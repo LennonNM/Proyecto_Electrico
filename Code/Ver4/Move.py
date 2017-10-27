@@ -60,7 +60,7 @@ def main(robotIP):
 #Obtencion de la informacion del archivo CVS
 
     #CSV_read.startRead("PruebaA.csv")
-    CSV_read.startRead()
+    CSV_read.startRead(coreo)
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
     if (referencia == 2):
@@ -154,7 +154,11 @@ if __name__ == "__main__":
     robotIp = "10.0.1.128" #Bato por red PrisNao
     #robotIp = "169.254.42.173" #Bato Local
 
-    if len(sys.argv) <= 2:
+    if len(sys.argv) <= 1:
+        print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
+        print "Default choreograph to run: PruebaA.csv"
+        coreo=None
+    elif len(sys.argv) <= 2:
         coreo = sys.argv[1]
         print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
         print "Choreograph file to read:", coreo
