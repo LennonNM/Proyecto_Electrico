@@ -2,6 +2,7 @@
 import csv
 import os
 import numpy as np
+from scipy.interpolate import *
 from itertools import islice
 from os.path import dirname, abspath
 from copy import deepcopy
@@ -146,55 +147,36 @@ def getCalData(archNao, archP):
     return RArmNao,RLegNao,LLegNao,LArmNao,TorsoNao,HeadNao,RArmP,RLegP,LLegP,LArmP,TorsoP,HeadP
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-def startCalibrate():
+def startCalibrate(listNAO, listP, degree=1):
     naoX = list()
     naoY = list()
     naoZ = list()
     pX = list()
     pY = list()
     pZ = list()
-    ArmNao = np.array(RArmNao)
-    ArmP   = np.array(RArmP)
-    n      = min(len(ArmNao),len(ArmP))
+    pl = [None]*3
 
-    ##Obtencion de media
-    meanNao = [0.0,0.0,0.0]
-    meanP   = [0.0,0.0,0.0]
+	#Se ocupa que ambos arreglos a comparar tengan la misma cantidad de datos,
+	#por lo que se utiliza la longitud mas corta
+    n = min(len(listNAO),len(listP))
+
+	#Separa datos X, Y y Z en grupos
     for i in range(n):
-        naoX.append(ArmNao[i][0])
-        naoY.append(ArmNao[i][1])
-        naoZ.append(ArmNao[i][2])
-        pX.append(ArmP[i][0])
-        pY.append(ArmP[i][1])
-        pZ.append(ArmP[i][2])
-
-    meanNao[0] = np.mean(naoX)
-    meanP[0]   = np.mean(pX)
-    meanNao[1] = np.mean(naoY)
-    meanP[1]   = np.mean(pY)
-    meanNao[2] = np.mean(naoZ)
-    meanP[2]   = np.mean(pZ)
-
-    ##Obtencion varianza y covarianza
-    varNao = [0.0,0.0,0.0]
-    cov = [0.0,0.0,0.0]
-
-    cov[0] = np.sum(pX*naoX - n*meanP[0]*meanNao[0])
-    cov[1] = np.sum(pX*naoX - n*meanP[1]*meanNao[1])
-    cov[2] = np.sum(pX*naoX - n*meanP[2]*meanNao[2])
-
-    varNao[0] = np.sum(naoX*naoX - n*meanNao[0]*meanNao[0])
-    varNao[1] = np.sum(naoX*naoX - n*meanNao[1]*meanNao[1])
-    varNao[2] = np.sum(naoX*naoX - n*meanNao[2]*meanNao[2])
-
-    ##Estimacion de los coeficientes de la relacion lineal
-    m = [0.0,0.0,0.0]
-    b = [0.0,0.0,0.0]
-
-    for i in range(len(m)):
-        m[i] = cov[i]/varNao[i]
-    for i in range(len(b)):
-        b[i] = meanP[i]-m[i]*meanNao[i]
+        naoX.append(listNAO[i][0])
+        naoY.append(listNAO[i][1])
+        naoZ.append(listNAO[i][2])
+        pX.append(listP[i][0])
+        pY.append(listP[i][1])
+        pZ.append(listP[i][2])
+    
+	#Obtiene los terminos de la relacion polinomial con grado 'degree'
+	#Por defecto se calcula regresion lineal
+	
+    pl[0] = list(np.polyfit(pX,naoX,degree))
+    pl[1] = list(np.polyfit(pY,naoY,degree))
+    pl[2] = list(np.polyfit(pZ,naoZ,degree))
+	
+    return pl
 
 
 

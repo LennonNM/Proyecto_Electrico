@@ -42,3 +42,6 @@ https://www.hulks.de/_files/BA_Felix_Wege.pdf
 
 #Fall Manager
 http://doc.aldebaran.com/1-14/naoqi/motion/reflexes-fall-manager.html
+
+#Linear Regression Python
+https://www.youtube.com/watch?v=ro5ftxuD6is
