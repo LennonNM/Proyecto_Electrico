@@ -23,24 +23,26 @@ TorsoNao = list()
 HeadNao  = list()
 
 ##Gets data lists from Nao and person
-def getCalData():
+def getCalData(archNao, archP):
     #Directorios con los datos de calibracion
     ##Root (../Code)
     rootDir = dirname(dirname(abspath(__file__)))
     ##Archivos con posiciones del Nao
-    dirNaoA = os.path.join(rootDir, "Ver4/Cal/Nao/PosA.csv")
+    dirNao = os.path.join(rootDir, "Ver4/Cal/Nao/")
+    dirNao = os.path.join(dirNao, archNao)
     ##Archivos con posiciones de la PERSONA_ROBOT
-    dirPersonaA = os.path.join(rootDir, "Ver4/Cal/Person/DATA/PruebaA.csv")
+    dirPersona = os.path.join(rootDir, "Ver4/Cal/Person/DATA/")
+    dirPersona = os.path.join(dirPersona, archP)
 
     #Obteniendo contenidos
     ##Nao
-    fNao = open(dirNaoA, 'rt')
+    fNao = open(dirNao, 'rt')
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(fNao)
     filasNao = [r for r in reader]
     fNao.close()
     ##Persona
-    fPersona = open(dirPersonaA, 'rt')
+    fPersona = open(dirPersona, 'rt')
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(fPersona)
     filasPersona = [r for r in reader]
