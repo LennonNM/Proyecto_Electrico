@@ -17,7 +17,7 @@ def startRead(nombreArchivo=None):
     #Coeficientes de Ajuste para valores del MoCap, considerando relacion lineal
     #entre datos del MoCap y datos del Nao
     ##Lectura del archivo con los parametros
-    listaOffsets = Offset_read.getLineal()
+    listaOffsets = OffsetFileFunc.getOffsets()
     ## RArm
     mx_RArm = float(listaOffsets[0][0])
     bx_RArm = float(listaOffsets[0][1])

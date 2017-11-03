@@ -16,7 +16,7 @@ from os.path import dirname, abspath
 ##M y B son los parametros de la relacion lineal encontrada F = Eje*M + B
 #
 #Devuelve parametros de la relacion LINEAL
-def getLineal():
+def getOffsets():
     #Creando objeto con contenido del archivo
     ##Abriendo archivo
     archivo = "offsets.csv"
@@ -26,9 +26,11 @@ def getLineal():
     filas = [r for r in reader]
     f.close()
 
+    ##Obtiene grado del polinomio
+    polDegree = filas[0].pop(0)
     ##Borrando indicadores y dejando solo datos
     del filas[0]
     for i,item in enumerate(filas):
         del filas[i][0]
 
-    return filas
+    return filas,polDegree
