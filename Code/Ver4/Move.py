@@ -7,6 +7,7 @@ from naoqi import ALProxy
 import motion
 
 import CSV_read #Lectura de los .CSV
+import errorFunc
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # control de la rigidez de los motores
@@ -155,19 +156,17 @@ if __name__ == "__main__":
     #robotIp = "169.254.42.173" #Bato Local
 
     if len(sys.argv) <= 1:
-        print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
-        print "Default choreograph to run: PruebaA.csv"
-        coreo=None
-    elif len(sys.argv) <= 2:
+        errorFunc.abort("None choreography file name received", "Move")
+    elif len(sys.argv) == 2:
         coreo = sys.argv[1]
         print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
         print "Choreograph file to read:", coreo
-    else:
+    elif len(sys.argv) >= 3:
         coreo = sys.argv[1]
         robotIp = sys.argv[2]
         print "Using robot IP:", robotIp
         print "Choreograph file to read:", coreo
 
-    time.sleep(1.0) #Tiempo para que se lean las indicaciones
+    time.sleep(1.0) #Tiempo para que el usuario lea las indicaciones
 
     main(robotIp)

@@ -1,7 +1,9 @@
+import sys
 import CalibrateFunc as cal
+import abortFunc
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-print off.getOffsets()
+def main(polDeg):
 #Realiza la calibracion segun las grabaciones de datos para calibrar dentro del
 #directorio local ../Cal/
     ##Obtiene datos desde los csv correspondientes para la primer pose de calibracion
@@ -44,4 +46,19 @@ print off.getOffsets()
     #yHead = cal.setAdjustAct()
     #zHead = cal.setAdjustAct()
 
-    return 0
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+if __name__ == "__main__":
+    polDeg = 2
+
+    if len(sys.argv) <= 1:
+        print "Default Linear Regression"
+        print "Starting calibration process..."
+    elif len(sys.argv) == 2:
+        try:
+            polDeg = int(sys.argv[1])
+        except ValueError as e:
+            abortFunc.abort("Expected int as argument in main function", "Calibrate")
+            
+    time.sleep(1.0)
+    main(polDeg)

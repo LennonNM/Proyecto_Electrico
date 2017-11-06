@@ -13,3 +13,6 @@
 
 #PDF's
 *.pdf
+
+#Dev testing file
+Trash.py
