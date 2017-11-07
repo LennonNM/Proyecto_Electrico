@@ -1,3 +1,4 @@
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #Al ejecutarse inicia la toma de datos de las posiciones de los actuadores
 #correspondientes a los 6 efectores finales del robot humanoide NAO
 #(RArm, RLeg, LLeg, LArm, Torso, Head). Se toman "rows" cantidad de sets de
@@ -16,9 +17,14 @@ from itertools import islice
 from os.path import dirname, abspath
 
 ##Custom
-import errorFunc
+import ErrorFunc
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+#Recibe IP del robot NAO, marco de referencia de las coordenadas y si se quiere
+#tomar datos de las rotaciones.
+#Devuelve un archivo CSV con la informacion solicitada, siguiende el formato
+#general de exportacion de archivo CSV de Motive
 def main(robotIP, frame, rotation):
     PORT = 9559
     print "Using Port:", PORT
@@ -27,7 +33,7 @@ def main(robotIP, frame, rotation):
     elif rotation.lower() == "yes":
         includeW = True
     else:
-        errorFunc.abort("Expected a yes or no input for rotation data inclussion", "GetPositions")
+        ErrorFunc.abort("Expected a yes or no input for rotation data inclussion", "GetPositions")
 
     try:
         print "Trying to create ALMotion proxy"
@@ -46,14 +52,14 @@ def main(robotIP, frame, rotation):
     elif frame == "TORSO":
         space = motion.FRAME_TORSO
     else:
-        errorFunc.abort("is not a valid frame for function", "GetPositions", frame)
+        ErrorFunc.abort("is not a valid frame for function", "GetPositions", frame)
     #Uso de sensores adicionales para aproximar el estado del actuador
     useSensorValues = False
 #-------------------------------------------------------------------------------
 #Obtencion de los datos
 
     rowsCounter = 0
-    rows = 220 #Tamano de la muestra
+    rows = 200 #Tamano de la muestra
     posRArm = []
     posRLeg = []
     posLLeg = []
@@ -96,7 +102,7 @@ def main(robotIP, frame, rotation):
     archivo += frame
     if inlcudeW == True:
         archivo += "-wROT"
-    archivo += time.strftime("_%Y-%m-%d")
+    archivo += time.strftime("_%Y-%m-%d_%H-%M-%S")
     archivo += ".csv"
 
     #Archivo incluyendo rotaciones del NAO

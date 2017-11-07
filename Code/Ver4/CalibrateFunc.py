@@ -1,3 +1,8 @@
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Incluye las funciones a utilizar para el proceso de calibracion definido en
+#Calibrate.py
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #Imports
 import csv
 import os
@@ -6,36 +11,52 @@ from scipy.interpolate import *
 from itertools import islice
 from os.path import dirname, abspath
 from copy import deepcopy
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-###Listas de coordenadas para cada actuador
-RArmP  = list()
-RLegP  = list()
-LLegP  = list()
-LArmP  = list()
-TorsoP = list()
-HeadP  = list()
-###Listas de coordenadas para cada actuador
-RArmNao  = list()
-RLegNao  = list()
-LLegNao  = list()
-LArmNao  = list()
-TorsoNao = list()
-HeadNao  = list()
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-#Obtiene listas con datos del NAO y la persona desde los correspondientes CSV
+###Listas de coordenadas para cada actuador
+RArmPCal  = list()
+RLegPCal  = list()
+LLegPCal  = list()
+LArmPCal  = list()
+TorsoPCal = list()
+HeadPCal  = list()
+###Listas de coordenadas para cada actuador
+RArmNaoCal  = list()
+RLegNaoCal  = list()
+LLegNaoCal  = list()
+LArmNaoCal  = list()
+TorsoNaoCal = list()
+HeadNaoCal  = list()
 
-def getCalData(archNao, archP):
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#Recibe archivos con las grabaciones de calibracion de una pose, del NAO y de
+#la persona. Devuelve listas individuales para cada actuador del NAO y de la
+#persona.
+def setCalData(archNao, archP):
+    #Limpia listas por usos previos
+    RArmPCal[:] = []
+    RLegPCal[:] = []
+    LLegPCal[:] = []
+    LArmPCal[:] = []
+    TorsoPCal[:] = []
+    HeadPCal[:] = []
+    RArmNaoCal[:] = []
+    RLegNaoCal[:] = []
+    LLegNaoCal[:] = []
+    LArmNaoCal[:] = []
+    TorsoNaoCal[:] = []
+    HeadNaoCal[:] = []
+
     #Directorios con los datos de calibracion
     ##Root (../Code)
     rootDir = dirname(dirname(abspath(__file__)))
     ##Archivos con posiciones del Nao
-    dirNao = os.path.join(rootDir, "Ver4/Cal/Nao/")
+    dirNao = os.path.join(rootDir, "Ver4/Cal/NAO/")
     dirNao = os.path.join(dirNao, archNao)
     ##Archivos con posiciones de la PERSONA_ROBOT
-    dirPersona = os.path.join(rootDir, "Ver4/Cal/Person/DATA/")
+    dirPersona = os.path.join(rootDir, "Ver4/Cal/Human/")
     dirPersona = os.path.join(dirPersona, archP)
 
     #Obteniendo contenidos
@@ -77,17 +98,17 @@ def getCalData(archNao, archP):
                 contXYZ = 0
 
                 if (contAct == 0):
-                    RArmNao.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                    RArmNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                 elif (contAct == 1):
-                    RLegNao.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                    RLegNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                 elif (contAct == 2):
-                    LLegNao.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                    LLegNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                 elif (contAct == 3):
-                    LArmNao.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                    LArmNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                 elif (contAct == 4):
-                    TorsoNao.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                    TorsoNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                 elif (contAct == 5):
-                    HeadNao.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                    HeadNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
 
                 if (contAct == 5):
                     contAct = 0
@@ -131,29 +152,33 @@ def getCalData(archNao, archP):
                 contXYZ = 0
 
                 if listaActuadores[contAct] == "RArm":
-                    RArmP.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    RArmPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                 elif listaActuadores[contAct] == "RLeg":
-                    RLegP.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    RLegPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                 elif listaActuadores[contAct] == "LLeg":
-                    LLegP.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    LLegPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                 elif listaActuadores[contAct] == "LArm":
-                    LArmP.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    LArmPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                 elif listaActuadores[contAct] == "Torso":
-                    TorsoP.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    TorsoPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                 elif listaActuadores[contAct] == "Head":
-                    HeadP.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    HeadPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
 
                 if (contAct == 5):
                     contAct = 0
                 else:
                     contAct+=1
-    return RArmNao,RLegNao,LLegNao,LArmNao,TorsoNao,HeadNao,RArmP,RLegP,LLegP,LArmP,TorsoP,HeadP
+
+    return RArmNaoCal,RLegNaoCal,LLegNaoCal,LArmNaoCal,TorsoNaoCal,HeadNaoCal,RArmPCal,RLegPCal,LLegPCal,LArmPCal,TorsoPCal,HeadPCal
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Realiza la regresion polinomial deseada para encontrar los terminos del ajuste
-
-def getTerms(listNAO, listP, degree=1):
+#Recibe la lista con datos de coordenadas XYZ para un solo actuador, del NAO
+#y de la persona, asi como el grado polinomial.
+#Devuelve una lista con los terminos del ajuste polinomial para X, Y y Z del
+#actuador recibido
+def getTerms(listNAO, listP, degree):
     naoX = list()
     naoY = list()
     naoZ = list()
@@ -163,7 +188,7 @@ def getTerms(listNAO, listP, degree=1):
     pl = [None]*3
 
 	#Se ocupa que ambos arreglos a comparar tengan la misma cantidad de datos,
-	#por lo que se utiliza la longitud mas corta
+	#por lo que se utiliza la longitud mas corta (suele ser la de datos del NAO)
     n = min(len(listNAO),len(listP))
 
 	#Separa datos X, Y y Z en grupos
@@ -188,7 +213,8 @@ def getTerms(listNAO, listP, degree=1):
 #-------------------------------------------------------------------------------
 #Obtiene el promedio de los terminos usados en todas las grabaciones bases
 #para la calibracion, para un mismo actuador
-
+#Recibe una lista con los terminos polinomiales de cada grabacion utilizada
+#para la calibracion. devuelve el promedio del ajuste polinomial para X, Y y Z
 def setAdjustAct(listTerms):
     n = len(listTerms[0][0])
     listX = list()

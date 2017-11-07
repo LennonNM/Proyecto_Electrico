@@ -6,7 +6,7 @@ import numpy
 from naoqi import ALProxy
 import motion
 
-import CSV_read #Lectura de los .CSV
+import CSVMOCAPFunc as csvMocap#Lectura de los .CSV
 import errorFunc
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -60,23 +60,23 @@ def main(robotIP):
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
 
-    #CSV_read.startRead("PruebaA.csv")
-    CSV_read.startRead(coreo)
+    #csvMocap.startRead("PruebaA.csv")
+    csvMocap.startRead(coreo)
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
     if (referencia == 2):
         #Marco de referencia ROBOT
-        listaCoordenadas = CSV_read.getCoordenadasROBOT()
+        listaCoordenadas = csvMocap.getCoordenadasROBOT()
     elif (referencia == 0):
         #Con ajuste respecto al TORSO
-        listaCoordenadas = CSV_read.getCoordenadasTORSO()
+        listaCoordenadas = csvMocap.getCoordenadasTORSO()
 
     ##Lista de Tiempos
-    listaTiempos = CSV_read.getTiempos()
+    listaTiempos = csvMocap.getTiempos()
 
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
-    listaActuadores = CSV_read.getActuadores()
+    listaActuadores = csvMocap.getActuadores()
 
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO
@@ -127,7 +127,7 @@ def main(robotIP):
 
     ##Tiempo de espera para iniciar movimiento
     time.sleep(1.0)
-    ##Ejecucion de las posiciones obtenidas del archivo CSV_read
+    ##Ejecucion de las posiciones obtenidas del archivo csvMocap
     motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
     #for a in range(len(listaCoordenadas)-1):
 

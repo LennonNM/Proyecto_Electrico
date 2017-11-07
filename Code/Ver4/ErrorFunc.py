@@ -1,20 +1,33 @@
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #Manejo de errores de uso de la aplicacion. Recibe explicacion del error,
 #script donde se dio el error, y entrada recibida que ocasiono el error (opcional)
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #Imports
 import sys
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #abort: ocasiona un aborto de la operacion en proceso
-def abort(reason, program, value=None):
+def abort(explanation, value=None, program=None, called=None):
     if value is not None:
         print "ERROR"
-        print value, reason
-        print "Aborting program:", program
+        print "Received", value
+        print explanation
+        if called is not None:
+            print "Called from:", called
+        if program is not None:
+            print "Aborting program:", program
+        else:
+            print "Aborting process"
     else:
         print "ERROR"
-        print reason
-        print "Aborting program:", program
+        print explanation
+        if called is not None:
+            print "Called from:", called
+        if program is not None:
+            print "Aborting program:", program
+        else:
+            print "Aborting process"
     sys.exit()
 #-------------------------------------------------------------------------------
