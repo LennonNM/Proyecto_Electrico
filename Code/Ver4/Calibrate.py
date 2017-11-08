@@ -71,9 +71,9 @@ def main(polDeg, humanDir=""):
     #Genera archivo CSV con los offsets finales a utilizar
     print "Writing offsets to default: .../Cal/Offsets/offsets.csv"
     try:
-        offset.writeOffsets(polDeg, [factRArmA,factRLeg, factLLeg, factLArm, factTorso, factHead])
+        offset.writeOffsets(polDeg, [factRArmA,factRLegA, factLLegA, factLArmA, factTorsoA, factHeadA])
     except Exception,e:
-        error.abort("Offset write unsuccessfull", "not valid arguments","OffsetFileFunc", "Calibration")
+        error.abort("Offset write unsuccessfull", "not valid arguments received","OffsetFileFunc", "Calibrate")
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------

@@ -39,11 +39,9 @@ def getOffsets():
     f.close()
     #---------------------------------------------------------------------------
     ##Obtiene grado del polinomio
-    polDegree = filas[0].pop(0)
-    ##Borrando encabezado y columna de ejes_actuadores
+    polDegree = int(filas[0].pop(0))
+    ##Borrando encabezado
     del filas[0]
-    for i,item in enumerate(filas):
-        del filas[i][0]
     #---------------------------------------------------------------------------
     ##Cada elemento de "filas" incluye todos los terminos segun el grado polinomial
     ##por eje_actuador, segun el orden preferente (XYZ para ejes, RArm, RLeg,

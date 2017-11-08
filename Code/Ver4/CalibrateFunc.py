@@ -14,6 +14,7 @@ from copy import deepcopy
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+#Globales
 ###Listas de coordenadas para cada actuador
 RArmPCal  = list()
 RLegPCal  = list()

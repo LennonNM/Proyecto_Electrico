@@ -1,3 +1,12 @@
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Incluye funciones para la lectura del archivo CSV y ajuste a los datos de la
+#grabacion del movimiento capturado en MoCap que se quiere ejecutar.
+##
+#Recibe los terminos del ajuste de calibracion del archivo CSV
+#.../Cal/Offsets/offsets.csv. Devuelve listas con los actuadores y vectores de
+#coordenadas y tiempos, Las coordenadas pueden ser obtenidas en los marcos de
+#referencia ROBOT y TORSO, segun se solicite.
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #Imports
 import csv
 import os
@@ -5,73 +14,77 @@ from itertools import islice
 from os.path import dirname, abspath
 from copy import deepcopy
 
-import Offset_read #Lectura parametros de ajuste
+##Custom
+import OffsetFileFunc as offset
+import ErrorFunc as error
+
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
+#Globales
 coordenadasArriba = list()
 coordenadasCompletasROBOT = list()
 coordenadasCompletasTORSO = list()
+
 #Inicia el procesamiento de los archivos CSV necesarios para el ajuste de datos
 #Recibe como parametro el nombre del archivo CSV con las coordenadas a leer
-def startRead(nombreArchivo=None):
+def startAdjustData(nombreArchivo):
     #Coeficientes de Ajuste para valores del MoCap, considerando relacion lineal
     #entre datos del MoCap y datos del Nao
     ##Lectura del archivo con los parametros
-    listaOffsets = OffsetFileFunc.getOffsets()
-    ## RArm
-    mx_RArm = float(listaOffsets[0][0])
-    bx_RArm = float(listaOffsets[0][1])
-    my_RArm = float(listaOffsets[1][0])
-    by_RArm = float(listaOffsets[1][1])
-    mz_RArm = float(listaOffsets[2][0])
-    bz_RArm = float(listaOffsets[2][1])
-    ## RLeg
-    mx_RLeg = float(listaOffsets[3][0])
-    bx_RLeg = float(listaOffsets[3][1])
-    my_RLeg = float(listaOffsets[4][0])
-    by_RLeg = float(listaOffsets[4][1])
-    mz_RLeg = float(listaOffsets[5][0])
-    bz_RLeg = float(listaOffsets[5][1])
-    ## LLeg
-    mx_LLeg = float(listaOffsets[6][0])
-    bx_LLeg = float(listaOffsets[6][1])
-    my_LLeg = float(listaOffsets[7][0])
-    by_LLeg = float(listaOffsets[7][1])
-    mz_LLeg = float(listaOffsets[8][0])
-    bz_LLeg = float(listaOffsets[8][1])
-    ## LArm
-    mx_LArm = float(listaOffsets[9][0])
-    bx_LArm = float(listaOffsets[9][1])
-    my_LArm = float(listaOffsets[10][0])
-    by_LArm = float(listaOffsets[10][1])
-    mz_LArm = float(listaOffsets[11][0])
-    bz_LArm = float(listaOffsets[11][1])
-    ## Torso
-    mx_Torso = float(listaOffsets[12][0])
-    bx_Torso = float(listaOffsets[12][1])
-    my_Torso = float(listaOffsets[13][0])
-    by_Torso = float(listaOffsets[13][1])
-    mz_Torso = float(listaOffsets[14][0])
-    bz_Torso = float(listaOffsets[14][1])
-    ## Head
-    mx_Head = float(listaOffsets[15][0])
-    bx_Head = float(listaOffsets[15][1])
-    my_Head = float(listaOffsets[16][0])
-    by_Head = float(listaOffsets[16][1])
-    mz_Head = float(listaOffsets[17][0])
-    bz_Head = float(listaOffsets[17][1])
+    try:
+        listaOffsets,degree = offset.getOffsets()
+    except Exception,e:
+        error.abort("Failed to get offsets from file offset.csv, check file", "CSVMOCAPFunc")
+
+    offRArm  = [[] for x in range(3)]
+    offRLeg  = [[] for x in range(3)]
+    offLLeg  = [[] for x in range(3)]
+    offLArm  = [[] for x in range(3)]
+    offTorso = [[] for x in range(3)]
+    offHead  = [[] for x in range(3)]
+
+    #RArm
+    for j in range(degree+1):
+        offRArm[0].append(round(float(listaOffsets[0][j]),4))
+        offRArm[1].append(round(float(listaOffsets[1][j]),4))
+        offRArm[2].append(round(float(listaOffsets[2][j]),4))
+    #RLeg
+    for j in range(degree+1):
+        offRLeg[0].append(round(float(listaOffsets[3][j]),4))
+        offRLeg[1].append(round(float(listaOffsets[4][j]),4))
+        offRLeg[2].append(round(float(listaOffsets[5][j]),4))
+    #LLeg
+    for j in range(degree+1):
+        offLLeg[0].append(round(float(listaOffsets[6][j]),4))
+        offLLeg[1].append(round(float(listaOffsets[7][j]),4))
+        offLLeg[2].append(round(float(listaOffsets[8][j]),4))
+
+    #LArm
+    for j in range(degree+1):
+        offLArm[0].append(round(float(listaOffsets[9][j]),4))
+        offLArm[1].append(round(float(listaOffsets[10][j]),4))
+        offLArm[2].append(round(float(listaOffsets[11][j]),4))
+
+    #Torso
+    for j in range(degree+1):
+        offTorso[0].append(round(float(listaOffsets[12][j]),4))
+        offTorso[1].append(round(float(listaOffsets[13][j]),4))
+        offTorso[2].append(round(float(listaOffsets[14][j]),4))
+
+    #Head
+    for j in range(degree+1):
+        offHead[0].append(round(float(listaOffsets[15][j]),4))
+        offHead[1].append(round(float(listaOffsets[16][j]),4))
+        offHead[2].append(round(float(listaOffsets[17][j]),4))
+
     #-------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------
     #Obtencion de directorio base
     rootDir = dirname(dirname(abspath(__file__)))
     #Declarando directorio para abrir archivo CSV
-    #archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
-    #archivo = os.path.join(rootDir, "Ver4/Choreograph/")
-    #Nombre del archivo CSV a leer
-    #archivo = os.path.join(archivo, nombreArchivo)
-    archivo = os.path.join(rootDir, "Posiciones_Para_Datos/PERSONA_ROBOT/DATA/")
-    #Nombre del archivo CSV a leer
-    archivo = os.path.join(archivo, "PruebaE.csv")
+    ##Nombre del archivo CSV a leer
+    archivo = os.path.join(rootDir, "Ver4/Choreography/")
+    archivo = os.path.join(archivo, nombreArchivo)
 
     #Creando objeto con contenido del archivo CSV
     ##Abriendo archivo
@@ -84,7 +97,6 @@ def startRead(nombreArchivo=None):
     #-------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------
     #Extrayendo informacion importante del archivo
-
     ##Obtencion del orden de aparicion de los marcadores(actuadores)
     filasActuadores = filasIniciales[3]
     ###Remueve primeros dos espacios siempre en blanco
@@ -97,7 +109,6 @@ def startRead(nombreArchivo=None):
         if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
             listaActuadores[j] = str(item)
             j+=1
-    #print listaActuadores
 
     #-------------------------------------------------------------------------------
     ##Obtencion datos de posiciones, estas se muestran hasta la fila #8 del archivo
@@ -105,12 +116,12 @@ def startRead(nombreArchivo=None):
     ##actuadores obtenidos
     filasCoordenadas = filasIniciales[7::]
 
-    ###Eliminado numero de cuadro
+    ###Eliminado numero de cuadro, no se utiliza
     for i,item in enumerate(filasCoordenadas):
         del filasCoordenadas[i][0]
 
     ###Elimina columna de tiempos, y a su vez extrae los tiempos en caso de usarse
-    ###estos en vez de la lista generada mas adelante
+    ###estos en vez de la lista generada mas adelante por defecto
     tiempos = [None]*len(filasCoordenadas)
     for i,item in enumerate(filasCoordenadas):
         tiempos[i] = round(float(filasCoordenadas[i].pop(0)), 2)
@@ -149,34 +160,55 @@ def startRead(nombreArchivo=None):
                     #trioTemp[contXYZ] = trioXYZ[contXYZ]
                 #Se tienen XYZ+rot para un actuador en un cuadro especifico
                 ### Z e Y estan invertidos en el marco de referencia del MoCap
-                ### rotaciones en 0.0
-                ####Sin importar el orden de los actuadores aqui se acomodan en el
-                ####orden preferente
+                ### Rotaciones en 0.0, X*-1
+                ####Sin importar el orden de los actuadores en el archivo aqui
+                ####se acomodan en el orden preferente y se aplica la correccion
+                ####con los offsets
                 if listaActuadores[contActuador] == "RArm":
-                    actuador[0].append([round(trioXYZ[0]*mx_RArm + bx_RArm, 2), round(trioXYZ[2]*my_RArm + by_RArm, 2), round(trioXYZ[1]*mz_RArm + bz_RArm, 2), 0.0, 0.0, 0.0])
+                    actuador[0].append([round((trioXYZ[0]**2)*offRArm[0][0]+(-1)*trioXYZ[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                        round((trioXYZ[2]**2)*offRArm[1][0]+trioXYZ[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                        round((trioXYZ[1]**2)*offRArm[2][0]+trioXYZ[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                        0.0, 0.0, 0.0])
                 elif listaActuadores[contActuador] == "RLeg":
-                    actuador[1].append([round(trioXYZ[0]*mx_RLeg + bx_RLeg, 2), round(trioXYZ[2]*my_RLeg + by_RLeg, 2), round(trioXYZ[1]*mz_RLeg + bz_RLeg, 2), 0.0, 0.0, 0.0])
+                    actuador[1].append([round((trioXYZ[0]**2)*offRLeg[0][2]+(-1)*trioXYZ[0]*offRLeg[0][1]+offRLeg[0][0], 2),
+                                        round((trioXYZ[2]**2)*offRLeg[1][2]+trioXYZ[2]*offRLeg[1][1]+offRLeg[1][0], 2),
+                                        round((trioXYZ[1]**2)*offRLeg[2][2]+trioXYZ[1]*offRLeg[2][1]+offRLeg[2][0], 2),
+                                        0.0, 0.0, 0.0])
                 elif listaActuadores[contActuador] == "LLeg":
-                    actuador[2].append([round(trioXYZ[0]*mx_LLeg + bx_LLeg, 2), round(trioXYZ[2]*my_LLeg + by_LLeg, 2), round(trioXYZ[1]*mz_LLeg + bz_LLeg, 2), 0.0, 0.0, 0.0])
+                    actuador[2].append([round((trioXYZ[0]**2)*offLLeg[0][2]+(-1)*trioXYZ[0]*offLLeg[0][1]+offLLeg[0][0], 2),
+                                        round((trioXYZ[2]**2)*offLLeg[1][2]+trioXYZ[2]*offLLeg[1][1]+offLLeg[1][0], 2),
+                                        round((trioXYZ[1]**2)*offLLeg[2][2]+trioXYZ[1]*offLLeg[2][1]+offLLeg[2][0], 2),
+                                        0.0, 0.0, 0.0])
                 elif listaActuadores[contActuador] == "LArm":
-                    actuador[3].append([round(trioXYZ[0]*mx_LArm + bx_LArm, 2), round(trioXYZ[2]*my_LArm + by_LArm, 2), round(trioXYZ[1]*mz_LArm + bz_LArm, 2), 0.0, 0.0, 0.0])
+                    actuador[3].append([round((trioXYZ[0]**2)*offLArm[0][2]+(-1)*trioXYZ[0]*offLArm[0][1]+offLArm[0][0], 2),
+                                        round((trioXYZ[2]**2)*offLArm[1][2]+trioXYZ[2]*offLArm[1][1]+offLArm[1][0], 2),
+                                        round((trioXYZ[1]**2)*offLArm[2][2]+trioXYZ[1]*offLArm[2][1]+offLArm[2][0], 2),
+                                        0.0, 0.0, 0.0])
                 elif listaActuadores[contActuador] == "Torso":
-                    actuador[4].append([round(trioXYZ[0]*mx_Torso + bx_Torso, 2), round(trioXYZ[2]*my_Torso + by_Torso, 2), round(trioXYZ[1]*mz_Torso + bz_Torso, 2), 0.0, 0.0, 0.0])
+                    actuador[4].append([round((trioXYZ[0]**2)*offTorso[0][2]+(-1)*trioXYZ[0]*offTorso[0][1]+offTorso[0][0], 2),
+                                        round((trioXYZ[2]**2)*offTorso[1][2]+trioXYZ[2]*offTorso[1][1]+offTorso[1][0], 2),
+                                        round((trioXYZ[1]**2)*offTorso[2][2]+trioXYZ[1]*offTorso[2][1]+offTorso[2][0], 2),
+                                        0.0, 0.0, 0.0])
                 elif listaActuadores[contActuador] == "Head":
-                    actuador[5].append([round(trioXYZ[0]*mx_Head + bx_Head, 2), round(trioXYZ[2]*my_Head + by_Head, 2), round(trioXYZ[1]*mz_Head + bz_Head, 2), 0.0, 0.0, 0.0])
+                    actuador[5].append([round((trioXYZ[0]**2)*offHead[0][2]+(-1)*trioXYZ[0]*offHead[0][1]+offHead[0][0], 2),
+                                        round((trioXYZ[2]**2)*offHead[1][2]+trioXYZ[2]*offHead[1][1]+offHead[1][0], 2),
+                                        round((trioXYZ[1]**2)*offHead[2][2]+trioXYZ[1]*offHead[2][1]+offHead[2][0], 2),
+                                        0.0, 0.0, 0.0])
                 contActuador+=1
                 if contActuador == 6:
                     contActuador = 0
 
-    #En este punto ya se tienen los vectores de posiciones XYZ+rotacion para cada
+    #En este punto ya se tienen los vectores de posiciones XYZ+rotacion(0.0) para cada
     #actuador independiente, en el orden segun el archivo CSV
+
     ##Generando Vector completo como lista de vectores para cada actuador
     global coordenadasCompletasROBOT
     coordenadasCompletasROBOT = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
     global coordenadasArriba
     coordenadasArriba = [actuador[0], actuador[3], actuador[4]]
+
     ##Si los datos obtenidos vienen con referencia al TORSO no es necesario este
-    ##proceso
+    ##proceso de cambio de referencia
     listaDeActuadores = deepcopy(coordenadasCompletasROBOT)
     ## RArm
     for i, item in enumerate(listaDeActuadores[0]):
@@ -202,11 +234,12 @@ def startRead(nombreArchivo=None):
     for i, item in enumerate(listaDeActuadores[4]):
         for j, item2 in enumerate(listaDeActuadores[4][j]):
             listaDeActuadores[4][i][j] = round((listaDeActuadores[4][i][j] - listaDeActuadores[4][i][j]), 2)
-    #Recibe datos respecto al TORSO
+    #Genera vector con datos respecto al TORSO
     global coordenadasCompletasTORSO
     coordenadasCompletasTORSO = listaDeActuadores
+
     #-------------------------------------------------------------------------------
-    #Base de tiempo para cada vector de la animacion
+    #Base de tiempo predeterminado para cada vector de la animacion
     ##Debe ser mayor a 20 ms (tiempo que dura en resolver el balance de cuerpo completo)
     ##y dar al menos 30 ms entre cambios
     ##coef depende de los cuadros por segundo de la animacion en Motive en el momento
@@ -229,7 +262,7 @@ def startRead(nombreArchivo=None):
 ##orden preferente
 def getActuadores():
     #return ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
-    return ["RArm", "LArm", "Torso"]
+    return ["RArm", "LArm", "Torso"] #Si se va a controlar solo area superior
 
 ##Devuelve posiciones X,Y,Z+rot en orden correspondiente a los actuadores obtenidos
 ##segun el marco ROBOT
