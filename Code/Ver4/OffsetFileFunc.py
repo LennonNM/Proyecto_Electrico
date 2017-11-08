@@ -64,6 +64,6 @@ def writeOffsets(degree, eje_actuador):
         #considera siempre estaran bien)
         writer.writerow([degree])
         for item in eje_actuador:
-            writer.writerow(item)
-
+            for element in item:
+                writer.writerow(element)
     return 0

@@ -35,11 +35,11 @@ def main(polDeg, humanDir=""):
     RArmNaoA,RLegNaoA,LLegNaoA,LArmNaoA,TorsoNaoA,HeadNaoA,RArmPA,RLegPA,LLegPA,LArmPA,TorsoPA,HeadPA = cal.setCalData("A_Cal_NAO.csv",humanDir + "A_Cal_P.csv")
     ##Obtiene factores para la regresion polinomial deseada para el ajuste
     factRArmA  = cal.getTerms(RArmNaoA, RArmPA, polDeg)
-    #factRLegA  = cal.getTerms(RLegNaoA, RLegPA, polDeg)
-    #factLLegA  = cal.getTerms(LLegNaoA, LLegPA, polDeg)
+    factRLegA  = cal.getTerms(RLegNaoA, RLegPA, polDeg)
+    factLLegA  = cal.getTerms(LLegNaoA, LLegPA, polDeg)
     factLArmA  = cal.getTerms(RArmNaoA, LArmPA, polDeg)
     factTorsoA = cal.getTerms(TorsoNaoA, TorsoPA, polDeg)
-    #factHeadA  = cal.getTerms(HeadNaoA, HeadPA, polDeg)
+    factHeadA  = cal.getTerms(HeadNaoA, HeadPA, polDeg)
 
     ##Repite pasos anteriores para cada una de las poses usadas para la calibracion
     ##de los brazos
@@ -54,7 +54,7 @@ def main(polDeg, humanDir=""):
 
     #---------------------------------------------------------------------------
     ##Obtiene ajuste general aplicable a todas las poses involucradas
-    xRArm, yRArm, zRArm = cal.setAdjustAct([factRArmA, factRArmB])
+    #xRArm, yRArm, zRArm = cal.setAdjustAct([factRArmA, factRArmB])
     #---------------------------------------------------------------------------
     #xRLeg, yRLeg, zRLeg = cal.setAdjustAct()
     #---------------------------------------------------------------------------
@@ -71,7 +71,7 @@ def main(polDeg, humanDir=""):
     #Genera archivo CSV con los offsets finales a utilizar
     print "Writing offsets to default: .../Cal/Offsets/offsets.csv"
     try:
-        offset.writeOffsets(polDeg, 2)
+        offset.writeOffsets(polDeg, [factRArmA,factRLeg, factLLeg, factLArm, factTorso, factHead])
     except Exception,e:
         error.abort("Offset write unsuccessfull", "not valid arguments","OffsetFileFunc", "Calibration")
 
