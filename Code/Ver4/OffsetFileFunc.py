@@ -46,6 +46,7 @@ def getOffsets():
     ##Cada elemento de "filas" incluye todos los terminos segun el grado polinomial
     ##por eje_actuador, segun el orden preferente (XYZ para ejes, RArm, RLeg,
     #LLeg, LArm, Torso, Head para actuadores; la lista es de 18 elementos)
+    print "Got offsets"
     return filas,polDegree
 
 #-------------------------------------------------------------------------------

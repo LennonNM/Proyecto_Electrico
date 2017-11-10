@@ -69,9 +69,12 @@ def main(polDeg, humanDir=""):
     #---------------------------------------------------------------------------
     #---------------------------------------------------------------------------
     #Genera archivo CSV con los offsets finales a utilizar
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     print "Writing offsets to default: .../Cal/Offsets/offsets.csv"
     try:
         offset.writeOffsets(polDeg, [factRArmA,factRLegA, factLLegA, factLArmA, factTorsoA, factHeadA])
+        print "Done"
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     except Exception,e:
         error.abort("Offset write unsuccessfull", "not valid arguments received","OffsetFileFunc", "Calibrate")
 
@@ -82,13 +85,17 @@ if __name__ == "__main__":
     humanDir = ""
 
     if len(sys.argv) <= 1:
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         print "Default Quadratic Regression"
         print "Human data directory not specified, default directory .../Cal/Human"
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         print "Starting calibration process..."
     elif len(sys.argv) == 2:
         try:
             polDeg = int(sys.argv[1])
+            print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
             print "Human data directory not specified, default directory .../Cal/Human"
+            print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
             print "Starting calibration process..."
         except ValueError as e:
             error.abort("Expected int as argument in main function", "Calibrate")
@@ -96,9 +103,11 @@ if __name__ == "__main__":
         try:
             polDeg = int(sys.argv[1])
             humanDir = sys.argv[2]
+            print "++++++++++++++++++++++++++++++++++++"
             print "Using Pol degree:", polDeg
             print "Reading Human dat from dir:", humanDir
             print "Starting calibration process..."
+            print "++++++++++++++++++++++++++++++++++++"
         except ValueError as e:
             error.abort("Expected int as argument in main function", "Calibrate")
 

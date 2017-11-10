@@ -42,6 +42,8 @@ def StiffnessOn(proxy):
 def main(robotIP,coreo,marcoRef=None):
     #SetUp
     PORT = 9559 #Puerto por defecto
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "Creating NAO objectos for posture and movement"
     #creacion de objetos para usar los metodos de los API's del Nao
     try:
         #Para poder utilizar funciones de movimiento de los actuadores del NAO
@@ -56,14 +58,21 @@ def main(robotIP,coreo,marcoRef=None):
     except Exception, e:
         print "Could not create proxy to ALRobotPosture"
         print "Error was: ", e
-
+    print "Connection to NAO available."
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Inicializacion de parametros necesarios para el movimiento del NAO
 
+    print "    Setting frame"
     ##Marco de Referencia a utilizar
     if marcoRef is not None:
-        referencia = marcoRef
+        if marcoRef == "TORSO":
+            referencia = motion.FRAME_TORSO
+            print "        Frame set to TORSO"
+        elif marcoRef == "ROBOT":
+            referencia = motion.FRAME_ROBOT
+            print "        Frame set to ROBOT"
     else: #Usa predeterminados
         #referencia = motion.FRAME_TORSO #Referencia centro del Torso
                                         #Vale 0
@@ -71,6 +80,7 @@ def main(robotIP,coreo,marcoRef=None):
                                         #Vale 1
         referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
                                         #Vale 2
+        print "        Frame set to default: ROBOT"
 
     ##Relacion coordenadas con marco de referencia
     absolutos = False #True para usar coordenadas absolutas respecto al marco de referencia
@@ -84,13 +94,16 @@ def main(robotIP,coreo,marcoRef=None):
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
-
+    print "    Starting adjustment of data..."
     try:
         csvMocap.startAdjustData(coreo)
+        print "    Adjustment completed."
     except Exception, e:
-        error.abort(coreo, "Cannot access file to adjust", "Move")
+        error.abort("Cannot access file to adjust", "Move.py")
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
+    print "    Getting coordinates"
     if (referencia == 2):
         #Marco de referencia ROBOT
         listaCoordenadas = csvMocap.getCoordenadasROBOT()
@@ -98,33 +111,50 @@ def main(robotIP,coreo,marcoRef=None):
         #Con ajuste respecto al TORSO
         listaCoordenadas = csvMocap.getCoordenadasTORSO()
 
+    print "    Getting times"
     ##Lista de Tiempos
     listaTiempos = csvMocap.getTiempos()
 
+    print "    Getting actuator names"
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
-    listaActuadores = csvMocap.getActuadores()
+    listaActuadores = csvMocap.getActuadores(marcoRef)
+
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO -- Teleoperacion
     #---------------------------------------------------------------------------
+    print "+++++++++++++++++++++++++++++++"
+    print "Setting up movement conditions"
+    print "+++++++++++++++++++++++++++++++"
     #Preparativos iniciales para mover el NAO
 
     ##Iniciando motores y activando rigidez para poder iniciar el movimiento
     ##en el NAO, si la rigidez no esta puesta el Nao no se mueve
     #motionProxy.wakeUp()
+    print "    Stiffness is ON"
     StiffnessOn(motionProxy)
 
+    print "    NAO standing"
     ##Llevando al NAO a una pose segura para moverse
     postureProxy.goToPosture("StandInit", 0.5)
     #postureProxy.goToPosture("Stand", 0.5) #Pose preferente
 
     ##Una vez que esta en una posicion segura se puede inhabilitar el contorlador
     ##automatico de caidas, esto para que no restrinja ciertas posiciones del Nao
-    ### **Tener en cuenta que ahora corre peligro de caidas dañinas, el Nao Debe
+    ### **Tener en cuenta que ahora corre peligro de caidas daninas, el Nao Debe
     ### estar en un ambiente controlado y el usuario atento a caidas para que
-    ### no sufra daños evitables**
+    ### no sufra danos evitables**
+    print "***************************************************************************"
+    print "***************************************************************************"
+    print "    Disabling Fall Manager"
+    print "WARNING: NAO wont react automatically to falls."
+    print "Please take care of the NAO robot during the execution of the teleoperation"
+    print "***************************************************************************"
+    print "***************************************************************************"
+    print "\n"
+    time.sleep(3.0)
     motionProxy.setFallManagerEnabled(False)
 
     ##Habilita Balanceo de Cuerpo Completo Automatico
@@ -145,14 +175,17 @@ def main(robotIP,coreo,marcoRef=None):
     ###Habilita soporte de ambas piernas con restricciones
     motionProxy.wbFootState(estadoFijo, soportePiernas)
     ###Para usar piernas con estados individuales
-    #motionProxy.wbFootState(estadoFijo, soporteDer)
-    #motionProxy.wbFootState(estadoFijo, soporteIzq)
+    #motionProxy.wbFootState(estadoPlano, soporteDer)
+    #motionProxy.wbFootState(estadoLibre, soporteIzq)
 
     ##Habilita balance del cuerpo sobre el soporte definido
     soporteActivo = True
     motionProxy.wbEnableBalanceConstraint(soporteActivo, soportePiernas)
+    print "    Balance constraints set"
 
     #---------------------------------------------------------------------------
+    print "++++++++++++++++++++++++++++"
+    print "NAO movement starting..."
     #Inicio del movimiento
 
     ##Tiempo de espera para iniciar movimiento
@@ -164,20 +197,30 @@ def main(robotIP,coreo,marcoRef=None):
     #    motionProxy.positionInterpolations(listaActuadores, referencia, [listaCoordenadas[0][a::a+1], listaCoordenadas[1][a::a+1], listaCoordenadas[2][a::a+1]],
     #        axisMask, [listaTiempos[0][a::a+1], listaTiempos[1][a::a+1], listaTiempos[2][a::a+1]], absolutos)
 
+    print "NAO movement ended. Resting NAO."
+    print "++++++++++++++++++++++++++++"
     ##Tiempo de espera entre ultimo movimiento y estado de reposo del Nao, para
     ##agregar estabilidad
-    time.sleep(1.0)
+    time.sleep(2.0)
 
     #Se habilita nuevamente el controlador automatico de caidas
     ##****IMPORTANTE REALIZAR ESTE PASO****##
     motionProxy.setFallManagerEnabled(True)
     ##Desactiva Balance de Cuerpo Completo **Debe ir al final del movimiento**
     motionProxy.wbEnable(False)
+    print "**********************"
+    print "Fall Manager Enabled"
+    print "**********************"
 
+    print "    NAO moving to posture: Crouch"
     ##Posicion de reposo seguras para finalizar la accion
     postureProxy.goToPosture("Crouch", 0.5)
     motionProxy.rest() # Apaga los motores del Nao
     ## **Si no se apagan es posible que se sobrecalienten aun estando en reposo**
+    print "    NAO is resting."
+    print "+++++++++++++++++++++++"
+    print "Teleoperation ended."
+    print "+++++++++++++++++++++++"
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -185,27 +228,27 @@ if __name__ == "__main__":
     robotIp = "10.0.1.128" #Bato por red PrisNao
     #robotIp = "169.254.42.173" #Bato Local
     coreo = ""
-    marcoRef = ""
+    marcoRef = None
 
     if len(sys.argv) <= 1:
         errorFunc.abort("None choreography file name received", "Move")
     elif len(sys.argv) == 2:
         coreo = sys.argv[1]
         print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
-        print "Choreograph file to read:", coreo
+        print "Choreography file to read:", coreo
     elif len(sys.argv) == 3:
         coreo   = sys.argv[1]
         robotIp = sys.argv[2]
         print "Using robot IP:", robotIp
-        print "Choreograph file to read:", coreo
+        print "Choreography file to read:", coreo
         time.sleep(1.5) #Tiempo para que el usuario lea las indicaciones
-        main(robotIp,coreo)
     elif len(sys.argv) >= 4:
         coreo    = sys.argv[1]
         robotIp  = sys.argv[2]
         marcoRef = sys.argv[2]
         print "Using robot IP:", robotIp
-        print "Choreograph file to read:", coreo
+        print "Choreography file to read:", coreo
         print "Using reference plane:", marcoRef
         time.sleep(1.5) #Tiempo para que el usuario lea las indicaciones
-        main(robotIp,coreo,marcoRef)
+
+    main(robotIp,coreo,marcoRef)

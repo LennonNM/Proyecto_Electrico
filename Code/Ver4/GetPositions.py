@@ -25,15 +25,12 @@ import ErrorFunc
 #tomar datos de las rotaciones.
 #Devuelve un archivo CSV con la informacion solicitada, siguiende el formato
 #general de exportacion de archivo CSV de Motive
-def main(robotIP, frame, rotation):
+def main(robotIP, frameRef, rotation, frames):
     PORT = 9559
     print "Using Port:", PORT
-    if rotation.lower() == "no":
-        includeW = False
-    elif rotation.lower() == "yes":
-        includeW = True
-    else:
-        ErrorFunc.abort("Expected a yes or no input for rotation data inclussion", "GetPositions")
+    if rotation.lower() != "no":
+        if rotation.lower() != "yes":
+            ErrorFunc.abort("Expected a yes or no input for rotation data inclussion", "GetPositions")
 
     try:
         print "Trying to create ALMotion proxy"
@@ -59,7 +56,7 @@ def main(robotIP, frame, rotation):
 #Obtencion de los datos
 
     rowsCounter = 0
-    rows = 200 #Tamano de la muestra
+    rows = frames #Tamano de la muestra
     posRArm = []
     posRLeg = []
     posLLeg = []
@@ -67,27 +64,29 @@ def main(robotIP, frame, rotation):
     posTorso = []
     posHead = []
 
-    print "Starting to collect data, interrupt the process only is necessary"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "Starting to collect data, interrupt the process only if necessary"
     print "Wait for completion"
     time.sleep(0.5)
 
     while (rowsCounter < rows):
         posRArm.append(motionProxy.getPosition("RArm", space, useSensorValues))
-        time.sleep(0.006) #Aproximacion de 0.033333/6 (tiempo de un cuadro/actuadores)
+        #time.sleep(0.006) #Aproximacion de 0.033333/6 (tiempo de un cuadro/actuadores)
         posRLeg.append(motionProxy.getPosition("RLeg", space, useSensorValues))
-        time.sleep(0.006)
+        #time.sleep(0.006)
         posLLeg.append(motionProxy.getPosition("LLeg", space, useSensorValues))
-        time.sleep(0.006)
+        #time.sleep(0.006)
         posLArm.append(motionProxy.getPosition("LArm", space, useSensorValues))
-        time.sleep(0.006)
+        #time.sleep(0.006)
         posTorso.append(motionProxy.getPosition("Torso", space, useSensorValues))
-        time.sleep(0.006)
+        #time.sleep(0.006)
         posHead.append(motionProxy.getPosition("Head", space, useSensorValues))
-        time.sleep(0.006)
+        #time.sleep(0.033)
 
         rowsCounter+=1
 
     print "Data collection finished"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     print "Writing CSV with data"
     time.sleep(0.25)
 #-------------------------------------------------------------------------------
@@ -98,15 +97,16 @@ def main(robotIP, frame, rotation):
     ## marcador involucrado(actuador) /// Filas 1 a 6 no dan informacion valiosa,
     ## en la fila 7 va el identificador de cada columna, a partir de la fila 8
     ## inician los datos de las posiciones
-    archivo = "NAO_"
+    rootDir = dirname(dirname(abspath(__file__)))
+    archivo = os.path.join(rootDir, "Ver4/Cal/NAO/GetPositions_Generated/NAO_")
     archivo += frame
-    if inlcudeW == True:
+    if rotation.lower() == "yes":
         archivo += "-wROT"
     archivo += time.strftime("_%Y-%m-%d_%H-%M-%S")
     archivo += ".csv"
 
     #Archivo incluyendo rotaciones del NAO
-    if includeW == True:
+    if rotation.lower() == "yes":
         with open(archivo, 'w') as csvfile:
             fieldnames = ['C1', 'C2', 'X RArm', 'Y RArm', 'Z RArm', 'WX RArm', 'WY RArm', 'WZ RArm', 'X RLeg', 'Y RLeg', 'Z RLeg', 'WX RLeg', 'WY RLeg', 'WZ RLeg',
                             'X LLeg', 'Y LLeg', 'Z LLeg', 'WX LLeg', 'WY LLeg', 'WZ LLeg', 'X LArm', 'Y LArm', 'Z LArm', 'WX LArm', 'WY LArm', 'WZ LArm',
@@ -138,31 +138,46 @@ def main(robotIP, frame, rotation):
                                         'X Torso': posTorso[i][0], 'Y Torso': posTorso[i][1], 'Z Torso': posTorso[i][2], 'X Head': posHead[i][0], 'Y Head': posHead[i][1], 'Z Head': posHead[i][2],
                                     })
 
+    print "END"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 if __name__ == "__main__":
     robotIP = "10.0.1.128" #Bato en red PrisNAO
-    frame = "ROBOT"
+    frameRef = "ROBOT"
     rotation = "no"
+    frames = 200
 
     if len(sys.argv) <= 1:
         print "Default robot IP", robotIP, " with default frame: ROBOT"
-        print "Include rotations: no"
+        print "Include rotations:", rotation
+        print "Frames to store:", frames
     elif len(sys.argv) == 2:
         robotIP = sys.argv[1]
         print "Using robot IP:", sys.argv[1], " with default frame: ROBOT"
-        print "Include rotations: no"
+        print "Include rotations:", rotation
+        print "Frames to store:", frames
     elif len(sys.argv) == 3:
         robotIP = sys.argv[1]
         frame = sys.argv[2]
-        print "Using robot IP:", sys.argv[1], " with frame:", frame
-        print "Include rotations: no"
+        print "Using robot IP:", sys.argv[1], " with frame:", frameRef
+        print "Include rotations:", rotation
+        print "Frames to store:", frames
     elif len(sys.argv) == 4:
         robotIP = sys.argv[1]
         frame = sys.argv[2]
         rotation = sys.argv[3]
-        print "Using robot IP:", sys.argv[1], " with frame:", frame
+        print "Using robot IP:", sys.argv[1], " with frame:", frameRef
         print "Include rotations:", rotation
+        print "Frames to store:", frames
+    elif len(sys.argv) == 5:
+        robotIP = sys.argv[1]
+        frame = sys.argv[2]
+        rotation = sys.argv[3]
+        frames = int(sys.argv[4])
+        print "Using robot IP:", sys.argv[1], " with frame:", frameRef
+        print "Include rotations:", rotation
+        print "Frames to store:", frames
 
     time.sleep(1.0)
-    main(robotIP, frame, rotation)
+    main(robotIP, frameRef, rotation, frames)

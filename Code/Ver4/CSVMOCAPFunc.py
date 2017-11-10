@@ -28,6 +28,8 @@ coordenadasCompletasTORSO = list()
 #Inicia el procesamiento de los archivos CSV necesarios para el ajuste de datos
 #Recibe como parametro el nombre del archivo CSV con las coordenadas a leer
 def startAdjustData(nombreArchivo):
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "Starting coordinates adjustment for", nombreArchivo
     #Coeficientes de Ajuste para valores del MoCap, considerando relacion lineal
     #entre datos del MoCap y datos del Nao
     ##Lectura del archivo con los parametros
@@ -79,6 +81,7 @@ def startAdjustData(nombreArchivo):
 
     #-------------------------------------------------------------------------------
     #-------------------------------------------------------------------------------
+    print "    Reading choreography file"
     #Obtencion de directorio base
     rootDir = dirname(dirname(abspath(__file__)))
     #Declarando directorio para abrir archivo CSV
@@ -126,6 +129,7 @@ def startAdjustData(nombreArchivo):
     for i,item in enumerate(filasCoordenadas):
         tiempos[i] = round(float(filasCoordenadas[i].pop(0)), 2)
 
+    print "    Generating new coordinates"
     ###Ordenando coordenadas para generar lista de posiciones XYZ segun el orden de los actuadores
     contXYZ = 0
     contActuador = 0
@@ -137,66 +141,69 @@ def startAdjustData(nombreArchivo):
     for i in range(len(listaActuadores)):
         actuador[i] = list()
 
-    for i, item in enumerate(filasCoordenadas):
-        #contActuador = 1 #Reinicia contador de actuador cada vez que carga fila nueva
-        for contTrio in range(0,18) : #3 ejes * 6 actuadores
-            if contXYZ < 2 :
-                if filasCoordenadas[i][0] == '' : #Revisa si se perdio el marcador
-                    #En caso de posicion faltante se pasa el valor obtenidos
-                    #del cuadro anterior con posicion valida
-                    basura = filasCoordenadas.pop(0) #Saca valor vacio de la lista
-                    trioXYZ[contXYZ] = trioTemp[contXYZ]
-                else :
-                    trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
-                    #trioTemp[contXYZ] = trioXYZ[contXYZ]
-                contXYZ+=1
-            elif contXYZ == 2 :
-                if filasCoordenadas[i][0] == '' :
-                    trioXYZ[contXYZ] = trioTemp[contXYZ]
-                    filasCoordenadas.pop(0)
-                else :
-                    trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
-                contXYZ=0
-                    #trioTemp[contXYZ] = trioXYZ[contXYZ]
-                #Se tienen XYZ+rot para un actuador en un cuadro especifico
-                ### Z e Y estan invertidos en el marco de referencia del MoCap
-                ### Rotaciones en 0.0, X*-1
-                ####Sin importar el orden de los actuadores en el archivo aqui
-                ####se acomodan en el orden preferente y se aplica la correccion
-                ####con los offsets
-                if listaActuadores[contActuador] == "RArm":
-                    actuador[0].append([round((trioXYZ[0]**2)*offRArm[0][0]+(-1)*trioXYZ[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                        round((trioXYZ[2]**2)*offRArm[1][0]+trioXYZ[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                        round((trioXYZ[1]**2)*offRArm[2][0]+trioXYZ[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                        0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador] == "RLeg":
-                    actuador[1].append([round((trioXYZ[0]**2)*offRLeg[0][2]+(-1)*trioXYZ[0]*offRLeg[0][1]+offRLeg[0][0], 2),
-                                        round((trioXYZ[2]**2)*offRLeg[1][2]+trioXYZ[2]*offRLeg[1][1]+offRLeg[1][0], 2),
-                                        round((trioXYZ[1]**2)*offRLeg[2][2]+trioXYZ[1]*offRLeg[2][1]+offRLeg[2][0], 2),
-                                        0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador] == "LLeg":
-                    actuador[2].append([round((trioXYZ[0]**2)*offLLeg[0][2]+(-1)*trioXYZ[0]*offLLeg[0][1]+offLLeg[0][0], 2),
-                                        round((trioXYZ[2]**2)*offLLeg[1][2]+trioXYZ[2]*offLLeg[1][1]+offLLeg[1][0], 2),
-                                        round((trioXYZ[1]**2)*offLLeg[2][2]+trioXYZ[1]*offLLeg[2][1]+offLLeg[2][0], 2),
-                                        0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador] == "LArm":
-                    actuador[3].append([round((trioXYZ[0]**2)*offLArm[0][2]+(-1)*trioXYZ[0]*offLArm[0][1]+offLArm[0][0], 2),
-                                        round((trioXYZ[2]**2)*offLArm[1][2]+trioXYZ[2]*offLArm[1][1]+offLArm[1][0], 2),
-                                        round((trioXYZ[1]**2)*offLArm[2][2]+trioXYZ[1]*offLArm[2][1]+offLArm[2][0], 2),
-                                        0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador] == "Torso":
-                    actuador[4].append([round((trioXYZ[0]**2)*offTorso[0][2]+(-1)*trioXYZ[0]*offTorso[0][1]+offTorso[0][0], 2),
-                                        round((trioXYZ[2]**2)*offTorso[1][2]+trioXYZ[2]*offTorso[1][1]+offTorso[1][0], 2),
-                                        round((trioXYZ[1]**2)*offTorso[2][2]+trioXYZ[1]*offTorso[2][1]+offTorso[2][0], 2),
-                                        0.0, 0.0, 0.0])
-                elif listaActuadores[contActuador] == "Head":
-                    actuador[5].append([round((trioXYZ[0]**2)*offHead[0][2]+(-1)*trioXYZ[0]*offHead[0][1]+offHead[0][0], 2),
-                                        round((trioXYZ[2]**2)*offHead[1][2]+trioXYZ[2]*offHead[1][1]+offHead[1][0], 2),
-                                        round((trioXYZ[1]**2)*offHead[2][2]+trioXYZ[1]*offHead[2][1]+offHead[2][0], 2),
-                                        0.0, 0.0, 0.0])
-                contActuador+=1
-                if contActuador == 6:
-                    contActuador = 0
+    try:
+        for i, item in enumerate(filasCoordenadas):
+            #contActuador = 1 #Reinicia contador de actuador cada vez que carga fila nueva
+            for contTrio in range(0,18) : #3 ejes * 6 actuadores
+                if contXYZ < 2 :
+                    if filasCoordenadas[i][0] == '' : #Revisa si se perdio el marcador
+                        #En caso de posicion faltante se pasa el valor obtenidos
+                        #del cuadro anterior con posicion valida
+                        basura = filasCoordenadas.pop(0) #Saca valor vacio de la lista
+                        trioXYZ[contXYZ] = trioTemp[contXYZ]
+                    else :
+                        trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
+                        #trioTemp[contXYZ] = trioXYZ[contXYZ]
+                    contXYZ+=1
+                elif contXYZ == 2 :
+                    if filasCoordenadas[i][0] == '' :
+                        trioXYZ[contXYZ] = trioTemp[contXYZ]
+                        filasCoordenadas.pop(0)
+                    else :
+                        trioXYZ[contXYZ] = float(filasCoordenadas[i].pop(0))
+                    contXYZ=0
+                        #trioTemp[contXYZ] = trioXYZ[contXYZ]
+                    #Se tienen XYZ+rot para un actuador en un cuadro especifico
+                    ### Z e Y estan invertidos en el marco de referencia del MoCap
+                    ### Rotaciones en 0.0, X*-1
+                    ####Sin importar el orden de los actuadores en el archivo aqui
+                    ####se acomodan en el orden preferente y se aplica la correccion
+                    ####con los offsets
+                    if listaActuadores[contActuador] == "RArm":
+                        actuador[0].append([round((trioXYZ[0]**2)*offRArm[0][0]+(-1)*trioXYZ[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                            round((trioXYZ[2]**2)*offRArm[1][0]+trioXYZ[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                            round((trioXYZ[1]**2)*offRArm[2][0]+trioXYZ[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                            0.0, 0.0, 0.0])
+                    elif listaActuadores[contActuador] == "RLeg":
+                        actuador[1].append([round((trioXYZ[0]**2)*offRLeg[0][2]+(-1)*trioXYZ[0]*offRLeg[0][1]+offRLeg[0][0], 2),
+                                            round((trioXYZ[2]**2)*offRLeg[1][2]+trioXYZ[2]*offRLeg[1][1]+offRLeg[1][0], 2),
+                                            round((trioXYZ[1]**2)*offRLeg[2][2]+trioXYZ[1]*offRLeg[2][1]+offRLeg[2][0], 2),
+                                            0.0, 0.0, 0.0])
+                    elif listaActuadores[contActuador] == "LLeg":
+                        actuador[2].append([round((trioXYZ[0]**2)*offLLeg[0][2]+(-1)*trioXYZ[0]*offLLeg[0][1]+offLLeg[0][0], 2),
+                                            round((trioXYZ[2]**2)*offLLeg[1][2]+trioXYZ[2]*offLLeg[1][1]+offLLeg[1][0], 2),
+                                            round((trioXYZ[1]**2)*offLLeg[2][2]+trioXYZ[1]*offLLeg[2][1]+offLLeg[2][0], 2),
+                                            0.0, 0.0, 0.0])
+                    elif listaActuadores[contActuador] == "LArm":
+                        actuador[3].append([round((trioXYZ[0]**2)*offLArm[0][2]+(-1)*trioXYZ[0]*offLArm[0][1]+offLArm[0][0], 2),
+                                            round((trioXYZ[2]**2)*offLArm[1][2]+trioXYZ[2]*offLArm[1][1]+offLArm[1][0], 2),
+                                            round((trioXYZ[1]**2)*offLArm[2][2]+trioXYZ[1]*offLArm[2][1]+offLArm[2][0], 2),
+                                            0.0, 0.0, 0.0])
+                    elif listaActuadores[contActuador] == "Torso":
+                        actuador[4].append([round((trioXYZ[0]**2)*offTorso[0][2]+(-1)*trioXYZ[0]*offTorso[0][1]+offTorso[0][0], 2),
+                                            round((trioXYZ[2]**2)*offTorso[1][2]+trioXYZ[2]*offTorso[1][1]+offTorso[1][0], 2),
+                                            round((trioXYZ[1]**2)*offTorso[2][2]+trioXYZ[1]*offTorso[2][1]+offTorso[2][0], 2),
+                                            0.0, 0.0, 0.0])
+                    elif listaActuadores[contActuador] == "Head":
+                        actuador[5].append([round((trioXYZ[0]**2)*offHead[0][2]+(-1)*trioXYZ[0]*offHead[0][1]+offHead[0][0], 2),
+                                            round((trioXYZ[2]**2)*offHead[1][2]+trioXYZ[2]*offHead[1][1]+offHead[1][0], 2),
+                                            round((trioXYZ[1]**2)*offHead[2][2]+trioXYZ[1]*offHead[2][1]+offHead[2][0], 2),
+                                            0.0, 0.0, 0.0])
+                    contActuador+=1
+                    if contActuador == 6:
+                        contActuador = 0
+    except Exception,e:
+        error.abort("Check file data, not able to read all of it", "CSVMOCAPFunc", "Move")
 
     #En este punto ya se tienen los vectores de posiciones XYZ+rotacion(0.0) para cada
     #actuador independiente, en el orden segun el archivo CSV
@@ -236,7 +243,7 @@ def startAdjustData(nombreArchivo):
             listaDeActuadores[4][i][j] = round((listaDeActuadores[4][i][j] - listaDeActuadores[4][i][j]), 2)
     #Genera vector con datos respecto al TORSO
     global coordenadasCompletasTORSO
-    coordenadasCompletasTORSO = listaDeActuadores
+    coordenadasCompletasTORSO = [listaDeActuadores[0], listaDeActuadores[1], listaDeActuadores[2], listaDeActuadores[3], listaDeActuadores[5]]
 
     #-------------------------------------------------------------------------------
     #Base de tiempo predeterminado para cada vector de la animacion
@@ -246,23 +253,27 @@ def startAdjustData(nombreArchivo):
     ##de exportar los datos
     coef = 0.05
     global listaTiempos
-    #listaTiempos = [None]*len(coordenadasCompletasROBOT)
-    #for i in range(len(coordenadasCompletasROBOT)):
-    #    listaTiempos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletasROBOT[i]))]
-        #Se maneja un vector de tiempos independiente para cada actuador, con longitud
-        #correspondiente a la lista con coordenadas respectivo al actuador
+    #listaTiempos = [None]*len(coordenadasCompletasTORSO)
+    #for i in range(len(coordenadasCompletasTORSO)):
+    #    listaTiempos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletasTORSO[i]))]
+    #Se maneja un vector de tiempos independiente para cada actuador, con longitud
+    #correspondiente a la lista con coordenadas respectivo al actuador
     listaTiempos = [None]*len(coordenadasArriba)
     for i in range(len(coordenadasArriba)):
         listaTiempos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasArriba[i]))]
+
+    print "Coordinates generated. Ready for movement."
+    print "++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Interfaz de extraccion de datos
 ##Devuelve lista de actuadores en el CSV, con orden a usar, si no se quiere el
 ##orden preferente
-def getActuadores():
-    #return ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
+def getActuadores(frame):
+    #return ["RArm", "RLeg", "LLeg", "LArm", "Head"]
     return ["RArm", "LArm", "Torso"] #Si se va a controlar solo area superior
+    #return ["RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"]
 
 ##Devuelve posiciones X,Y,Z+rot en orden correspondiente a los actuadores obtenidos
 ##segun el marco ROBOT

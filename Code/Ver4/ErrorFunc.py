@@ -10,24 +10,25 @@ import sys
 #-------------------------------------------------------------------------------
 #abort: ocasiona un aborto de la operacion en proceso
 def abort(explanation, value=None, program=None, called=None):
+    print "---------------------------------------------------"
+    print "ERROR on Teleoperation Execution:"
     if value is not None:
-        print "ERROR"
-        print "Received", value
+        print "        Received", value
         print explanation
         if called is not None:
-            print "Called from:", called
+            print "        Called from:", called
         if program is not None:
-            print "Aborting program:", program
+            print "    A borting program:", program
         else:
-            print "Aborting process"
+            print "    Aborting process"
     else:
-        print "ERROR"
         print explanation
         if called is not None:
-            print "Called from:", called
+            print "        Called from:", called
         if program is not None:
-            print "Aborting program:", program
+            print "    Aborting program:", program
         else:
-            print "Aborting process"
+            print "    Aborting process"
+    print "---------------------------------------------------"
     sys.exit()
 #-------------------------------------------------------------------------------
