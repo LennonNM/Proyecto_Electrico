@@ -32,7 +32,7 @@ def main(polDeg, humanDir=""):
     #Datos para calibrar el movimiento de los brazos
     ##Cal A
     ###Obtiene datos desde los csv correspondientes para la primer pose de calibracion
-    RArmNaoA,RLegNaoA,LLegNaoA,LArmNaoA,TorsoNaoA,HeadNaoA,RArmPA,RLegPA,LLegPA,LArmPA,TorsoPA,HeadPA = cal.setCalData("A_Cal_NAO.csv",humanDir + "A_Cal_P.csv")
+    RArmNaoA,RLegNaoA,LLegNaoA,LArmNaoA,TorsoNaoA,HeadNaoA,RArmPA,RLegPA,LLegPA,LArmPA,TorsoPA,HeadPA = cal.setCalData("Brazos_NAO.csv",humanDir + "Brazos.csv")
     ##Obtiene factores para la regresion polinomial deseada para el ajuste
     factRArmA  = cal.getTerms(RArmNaoA, RArmPA, polDeg)
     factRLegA  = cal.getTerms(RLegNaoA, RLegPA, polDeg)
@@ -44,13 +44,13 @@ def main(polDeg, humanDir=""):
     ##Repite pasos anteriores para cada una de las poses usadas para la calibracion
     ##de los brazos
     ##Cal B
-    RArmNaoB,RLegNaoB,LLegNaoB,LArmNaoB,TorsoNaoB,HeadNaoB,RArmPB,RLegPB,LLegPB,LArmPB,TorsoPB,HeadPB = cal.setCalData("A_Cal_NAO.csv",humanDir + "A_Cal_P.csv")
-    factRArmB  = cal.getTerms(RArmNaoB, RArmPB, polDeg)
-    factRLegB  = cal.getTerms(RLegNaoB, RLegPB, polDeg)
-    factLLegB  = cal.getTerms(LLegNaoB, LLegPB, polDeg)
-    factLArmB  = cal.getTerms(RArmNaoB, LArmPB, polDeg)
-    factTorsoB = cal.getTerms(TorsoNaoB, TorsoPB, polDeg)
-    factHeadB  = cal.getTerms(HeadNaoB, HeadPB, polDeg)
+    #RArmNaoB,RLegNaoB,LLegNaoB,LArmNaoB,TorsoNaoB,HeadNaoB,RArmPB,RLegPB,LLegPB,LArmPB,TorsoPB,HeadPB = cal.setCalData("A_Cal_NAO.csv",humanDir + "A_Cal_P.csv")
+    #factRArmB  = cal.getTerms(RArmNaoB, RArmPB, polDeg)
+    #factRLegB  = cal.getTerms(RLegNaoB, RLegPB, polDeg)
+    #factLLegB  = cal.getTerms(LLegNaoB, LLegPB, polDeg)
+    #factLArmB  = cal.getTerms(RArmNaoB, LArmPB, polDeg)
+    #factTorsoB = cal.getTerms(TorsoNaoB, TorsoPB, polDeg)
+    #factHeadB  = cal.getTerms(HeadNaoB, HeadPB, polDeg)
 
     #---------------------------------------------------------------------------
     ##Obtiene ajuste general aplicable a todas las poses involucradas
