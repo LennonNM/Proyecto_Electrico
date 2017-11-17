@@ -26,7 +26,7 @@
                             <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
                             <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" />
                             <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" />
-                            <Timeline enable="1" fps="25" start_frame="1" end_frame="-1" size="180">
+                            <Timeline enable="1" fps="30" start_frame="1" end_frame="-1" size="180">
                                 <ActuatorList model="nao">
                                     <ActuatorCurve name="value" actuator="HeadPitch" recordable="0" mute="0" unit="0">
                                         <Key frame="1" value="-10.5494" />
@@ -161,6 +161,8 @@
                                 </ActuatorList>
                             </Timeline>
                         </Box>
+                        <Link inputowner="0" indexofinput="4" outputowner="1" indexofoutput="4" />
+                        <Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" />
                     </Diagram>
                 </BehaviorKeyframe>
             </BehaviorLayer>

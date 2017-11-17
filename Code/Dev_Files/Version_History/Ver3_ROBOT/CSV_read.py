@@ -55,9 +55,9 @@ bz_Head = -0.12
 rootDir = dirname(dirname(abspath(__file__)))
 #Declarando directorio para abrir archivo CSV
 #archivo = os.path.join(rootDir, "Posiciones_Para_Datos/ROBOT_2/DATA/")
-archivo = os.path.join(rootDir, "Posiciones_Para_Datos/PERSONA_ROBOT/DATA/")
+archivo = os.path.join(rootDir, "Ver3_ROBOT/")
 #Nombre del archivo CSV a leer
-archivo = os.path.join(archivo, "PruebaA.csv")
+archivo = os.path.join(archivo, "PruebaA_2.csv")
 
 #Creando objeto con contenido del archivo CSV
 ##Abriendo archivo

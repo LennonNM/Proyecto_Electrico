@@ -12,6 +12,8 @@ from itertools import islice
 from os.path import dirname, abspath
 from copy import deepcopy
 
+#Custom
+import ErrorFunc as error
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Globales
@@ -62,13 +64,20 @@ def setCalData(archNao, archP):
 
     #Obteniendo contenidos
     ##Nao
-    fNao = open(dirNao, 'rt')
+    try:
+        fNao = open(dirNao, 'rt')
+    except Exception,e:
+        error.abort("is not a valid directory", archNao, "Calibrate")
+
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(fNao)
     filasNao = [r for r in reader]
     fNao.close()
     ##Persona
-    fPersona = open(dirPersona, 'rt')
+    try:
+        fPersona = open(dirPersona, 'rt')
+    except Exception,e:
+        error.abort("is not a valid directory", archP, "Calibrate")
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(fPersona)
     filasPersona = [r for r in reader]
