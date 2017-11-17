@@ -67,10 +67,10 @@ def main(robotIP,coreo,marcoRef=None):
     print "    Setting frame"
     ##Marco de Referencia a utilizar
     if marcoRef is not None:
-        if marcoRef == "TORSO":
+        if marcoRef.upper() == "TORSO":
             referencia = motion.FRAME_TORSO
             print "        Frame set to TORSO"
-        elif marcoRef == "ROBOT":
+        elif marcoRef.upper() == "ROBOT":
             referencia = motion.FRAME_ROBOT
             print "        Frame set to ROBOT"
     else: #Usa predeterminados
@@ -90,7 +90,11 @@ def main(robotIP,coreo,marcoRef=None):
     #### AXIS_MASK_ALL controla XYZ y rotacion
     #### AXIS_MASK_VEL controla solo XYZ
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
-    axisMask = [ motion.AXIS_MASK_VEL ]*3
+    if marcoRef.upper() == "ROBOT":
+        #axisMask = [ motion.AXIS_MASK_VEL ]*4
+        axisMask = [ motion.AXIS_MASK_VEL ]*3 #Usando ARRIBA
+    elif marcoRef.upper() == "TORSO":
+        axisMask = [ motion.AXIS_MASK_VEL ]*5
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
@@ -113,13 +117,17 @@ def main(robotIP,coreo,marcoRef=None):
 
     print "    Getting times"
     ##Lista de Tiempos
-    listaTiempos = csvMocap.getTiempos()
+    listaTiempos = csvMocap.getTiemposArriba()
+    #listaTiempos = csvMocap.getTiempos()
 
     print "    Getting actuator names"
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
-    listaActuadores = csvMocap.getActuadores(marcoRef)
-
+    if marcoRef.upper() == "ROBOT":
+        #listaActuadores = ["RArm", "LArm", "Torso", "Head"]
+        listaActuadores = ["RArm", "LArm", "Torso"] #Usando ARRIBA
+    elif marcoRef.upper() == "TORSO":
+        listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Head"]
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------

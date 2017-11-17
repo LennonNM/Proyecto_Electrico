@@ -55,14 +55,14 @@ def getOffsets():
 #Recibe grado polinomial usado y lista con grupos de terminos por eje_actuador,
 #segun el orden preferente (XYZ para ejes, RArm, RLeg,#LLeg, LArm, Torso, Head
 #para actuadores; la lista debe contener 18 elementos)
-def writeOffsets(degree, eje_actuador):
+def writeOffsets(degree, eje_actuador, rotacion):
     archivo = dirname(dirname(abspath(__file__)))
     archivo += "/Ver5/Cal/Offsets/offsets.csv"
     with open(archivo, 'w') as csvfile:
         writer = csv.writer(csvfile)
         #Encabezado (solo importa el grado ya que el orden de los terminos se
         #considera siempre estaran bien)
-        writer.writerow([degree])
+        writer.writerow([degree, rotacion])
         for item in eje_actuador:
             for element in item:
                 writer.writerow(element)

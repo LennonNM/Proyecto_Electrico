@@ -113,12 +113,12 @@ def main(robotIP, frameRef, rotation):
                 writer.writerow({})
             writer.writeheader()
             for i in range(rows):
-                writer.writerow({'X RArm': posRArm[i][0], 'Y RArm': posRArm[i][1], 'Z RArm': posRArm[i][2], 'WX RArm': posRArm[i][0], 'WY RArm': posRArm[i][1], 'WZ RArm': posRArm[i][2],
-                                    'X RLeg': posRLeg[i][0], 'Y RLeg': posRLeg[i][1], 'Z RLeg': posRLeg[i][2], 'WX RLeg': posRLeg[i][0], 'WY RLeg': posRLeg[i][1], 'WZ RLeg': posRLeg[i][2],
-                                    'X LLeg': posLLeg[i][0], 'Y LLeg': posLLeg[i][1], 'Z LLeg': posLLeg[i][2], 'WX LLeg': posLLeg[i][0], 'WY LLeg': posLLeg[i][1], 'WZ LLeg': posLLeg[i][2],
-                                    'X LArm': posLArm[i][0], 'Y LArm': posLArm[i][1], 'Z LArm': posLArm[i][2], 'WX LArm': posLArm[i][0], 'WY LArm': posLArm[i][1], 'WZ LArm': posLArm[i][2],
-                                    'X Torso': posTorso[i][0], 'Y Torso': posTorso[i][1], 'Z Torso': posTorso[i][2], 'WX Torso': posTorso[i][0], 'WY Torso': posTorso[i][1], 'WZ Torso': posTorso[i][2],
-                                    'X Head': posHead[i][0], 'Y Head': posHead[i][1], 'Z Head': posHead[i][2], 'WX Head': posHead[i][0], 'WY Head': posHead[i][1], 'WZ Head': posHead[i][2],
+                writer.writerow({'X RArm': posRArm[i][0], 'Y RArm': posRArm[i][1], 'Z RArm': posRArm[i][2], 'WX RArm': posRArm[i][3], 'WY RArm': posRArm[i][4], 'WZ RArm': posRArm[i][5],
+                                    'X RLeg': posRLeg[i][0], 'Y RLeg': posRLeg[i][1], 'Z RLeg': posRLeg[i][2], 'WX RLeg': posRLeg[i][3], 'WY RLeg': posRLeg[i][4], 'WZ RLeg': posRLeg[i][5],
+                                    'X LLeg': posLLeg[i][0], 'Y LLeg': posLLeg[i][1], 'Z LLeg': posLLeg[i][2], 'WX LLeg': posLLeg[i][3], 'WY LLeg': posLLeg[i][4], 'WZ LLeg': posLLeg[i][5],
+                                    'X LArm': posLArm[i][0], 'Y LArm': posLArm[i][1], 'Z LArm': posLArm[i][2], 'WX LArm': posLArm[i][3], 'WY LArm': posLArm[i][4], 'WZ LArm': posLArm[i][5],
+                                    'X Torso': posTorso[i][0], 'Y Torso': posTorso[i][1], 'Z Torso': posTorso[i][2], 'WX Torso': posTorso[i][3], 'WY Torso': posTorso[i][4], 'WZ Torso': posTorso[i][5],
+                                    'X Head': posHead[i][0], 'Y Head': posHead[i][1], 'Z Head': posHead[i][2], 'WX Head': posHead[i][3], 'WY Head': posHead[i][4], 'WZ Head': posHead[i][5],
                                 })
         #Archivo sin rotaciones
     else:

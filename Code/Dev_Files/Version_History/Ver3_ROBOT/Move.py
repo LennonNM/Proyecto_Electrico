@@ -44,7 +44,7 @@ def main(robotIP):
     referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
 
     ##Relacion coordenadas con marco de referencia
-    absolutos = False #True para usar coordenadas absolutas respecto al marco de referencia
+    absolutos = True #True para usar coordenadas absolutas respecto al marco de referencia
 
     ##Grados de libertad a utilizar
     ###Debe incluir un elemento por cada actuador a controlar
