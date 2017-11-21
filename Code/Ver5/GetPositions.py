@@ -25,7 +25,7 @@ import ErrorFunc as error
 #tomar datos de las rotaciones.
 #Devuelve un archivo CSV con la informacion solicitada, siguiende el formato
 #general de exportacion de archivo CSV de Motive
-def main(robotIP, frameRef, rotation):
+def main(robotIP, frameRef, rotation, name=None):
     PORT = 9559
     print "Using Port:", PORT
     if rotation.lower() != "no":
@@ -96,10 +96,13 @@ def main(robotIP, frameRef, rotation):
     ## inician los datos de las posiciones
     rootDir = dirname(dirname(abspath(__file__)))
     archivo = os.path.join(rootDir, "Ver5/Cal/NAO/GetPositions_Generated/NAO_")
-    archivo += frameRef
-    if rotation.lower() == "yes":
-        archivo += "-wROT"
-    archivo += time.strftime("_%Y-%m-%d_%H-%M-%S")
+    if name is None:
+        archivo += frameRef
+        if rotation.lower() == "yes":
+            archivo += "-wROT"
+        archivo += time.strftime("_%Y-%m-%d_%H-%M-%S")
+    else:
+        archivo += name
     archivo += ".csv"
 
     #Archivo incluyendo rotaciones del NAO
@@ -143,6 +146,7 @@ if __name__ == "__main__":
     robotIP = "10.0.1.128" #Bato en red PrisNAO
     frameRef = "ROBOT"
     rotation = "no"
+    name = None
 
     if len(sys.argv) <= 1:
         print "Default robot IP", robotIP, " with default frame: ROBOT"
@@ -162,6 +166,14 @@ if __name__ == "__main__":
         rotation = sys.argv[3]
         print "Using robot IP:", sys.argv[1], " with frame:", frameRef
         print "Include rotations:", rotation
+    elif len(sys.argv) == 5:
+        robotIP = sys.argv[1]
+        frame = sys.argv[2]
+        rotation = sys.argv[3]
+        name = sys.argv[4]
+        print "Using robot IP:", sys.argv[1], " with frame:", frameRef
+        print "Include rotations:", rotation
+        print "Name of CSV file: NAO_", name
 
     time.sleep(1.0)
-    main(robotIP, frameRef, rotation)
+    main(robotIP, frameRef, rotation, name)
