@@ -31,36 +31,22 @@ import OffsetFileFunc as offset
 def main(polDeg, humanDir=""):
     #Datos para calibrar el movimiento de los brazos
     ###Obtiene datos desde los csv correspondientes para la primer pose de calibracion
-    RArmNaoA,RLegNaoA,LLegNaoA,LArmNaoA,TorsoNaoA,HeadNaoA,RArmPA,RLegPA,LLegPA,LArmPA,TorsoPA,HeadPA = cal.setCalData("Brazos_NAO.csv",humanDir + "/" + "Brazos.csv")
+    RArmNaoA,RLegNaoA,LLegNaoA,LArmNaoA,TorsoNaoA,HeadNaoA,RArmPA,RLegPA,LLegPA,LArmPA,TorsoPA,HeadPA = cal.setCalData("Brazos_NAO.csv",humanDir + "/" + "Brazos.csv",True)
     ##Obtiene factores para la regresion polinomial deseada para el ajuste
     print RArmPA[0]
-    factRArmA  = cal.getTerms(RArmNaoA, RArmPA, polDeg)
-    factLArmA  = cal.getTerms(RArmNaoA, LArmPA, polDeg)
+    factRArmA  = cal.getTerms(RArmNaoA, RArmPA, polDeg, True)
+    factLArmA  = cal.getTerms(RArmNaoA, LArmPA, polDeg, True)
 
     ##Repite pasos anteriores para cada una de las poses usadas para los demas actuadores
     ###Pierna derecha
-    RArmNaoB,RLegNaoB,LLegNaoB,LArmNaoB,TorsoNaoB,HeadNaoB,RArmPB,RLegPB,LLegPB,LArmPB,TorsoPB,HeadPB = cal.setCalData("PiernaD_NAO.csv",humanDir + "/" + "PiernaD.csv")
-    factRLeg  = cal.getTerms(RLegNaoB, RLegPB, polDeg)
+    RArmNaoB,RLegNaoB,LLegNaoB,LArmNaoB,TorsoNaoB,HeadNaoB,RArmPB,RLegPB,LLegPB,LArmPB,TorsoPB,HeadPB = cal.setCalData("PiernaD_NAO.csv",humanDir + "/" + "PiernaD.csv",True)
+    factRLeg  = cal.getTerms(RLegNaoB, RLegPB, polDeg, True)
     ###Pierna izquierda
-    RArmNaoC,RLegNaoC,LLegNaoC,LArmNaoC,TorsoNaoC,HeadNaoC,RArmPC,RLegPC,LLegPC,LArmPC,TorsoPC,HeadPC = cal.setCalData("PiernaI_NAO.csv",humanDir + "/" + "PiernaI.csv")
-    factLLeg  = cal.getTerms(RLegNaoB, RLegPB, polDeg)
+    RArmNaoC,RLegNaoC,LLegNaoC,LArmNaoC,TorsoNaoC,HeadNaoC,RArmPC,RLegPC,LLegPC,LArmPC,TorsoPC,HeadPC = cal.setCalData("PiernaI_NAO.csv",humanDir + "/" + "PiernaI.csv",True)
+    factLLeg  = cal.getTerms(RLegNaoB, RLegPB, polDeg, True)
     ###Pierna Torso
-    RArmNaoD,RLegNaoD,LLegNaoD,LArmNaoD,TorsoNaoD,HeadNaoD,RArmPD,RLegPD,LLegPD,LArmPD,TorsoPD,HeadPD = cal.setCalData("Torso_NAO.csv",humanDir + "/" + "Torso.csv")
-    factTorso  = cal.getTerms(RLegNaoB, RLegPB, polDeg)
-
-    #---------------------------------------------------------------------------
-    ##Obtiene ajuste general aplicable a todas las poses involucradas
-    #xRArm, yRArm, zRArm = cal.setAdjustAct([factRArmA, factRArmB])
-    #---------------------------------------------------------------------------
-    #xRLeg, yRLeg, zRLeg = cal.setAdjustAct()
-    #---------------------------------------------------------------------------
-    #xLLeg, yLLeg, zLLeg = cal.setAdjustAct()
-    #---------------------------------------------------------------------------
-    #xLArm, yLArm, zLArm = cal.setAdjustAct()
-    #---------------------------------------------------------------------------
-    #xTorso, yTorso, zTorso = cal.setAdjustAct()
-    #---------------------------------------------------------------------------
-    #xHead, yHead, zHead = cal.setAdjustAct()
+    RArmNaoD,RLegNaoD,LLegNaoD,LArmNaoD,TorsoNaoD,HeadNaoD,RArmPD,RLegPD,LLegPD,LArmPD,TorsoPD,HeadPD = cal.setCalData("Torso_NAO.csv",humanDir + "/" + "Torso.csv",True)
+    factTorso  = cal.getTerms(RLegNaoB, RLegPB, polDeg, True)
 
     #---------------------------------------------------------------------------
     #---------------------------------------------------------------------------
