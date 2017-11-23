@@ -102,24 +102,30 @@ def setCalData(archNao, archP, wRot):
         for i,item in enumerate(filasDatosNao):
             for contTrio in range(0,18): #3DoF*6Actuadores
                 if contXYZ < 2:
-                    trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
+                    try:
+                        trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
+                    except ValueError:
+                        print "Cell is not a valid value"
                     contXYZ+=1
                 elif contXYZ == 2:
-                    trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
+                    try:
+                        trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
+                    except ValueError:
+                        print "Cell is not a valid value"
                     contXYZ = 0
 
                     if (contAct == 0):
-                        RArmNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                        RArmNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                     elif (contAct == 1):
-                        RLegNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                        RLegNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                     elif (contAct == 2):
-                        LLegNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                        LLegNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                     elif (contAct == 3):
-                        LArmNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                        LArmNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                     elif (contAct == 4):
                         TorsoNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
                     elif (contAct == 5):
-                        HeadNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2]])
+                        HeadNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2]])
 
                     if (contAct == 5):
                         contAct = 0
@@ -150,17 +156,17 @@ def setCalData(archNao, archP, wRot):
                     contXYZ = 0
 
                     if (contAct == 0):
-                        RArmNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
+                        RArmNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
                     elif (contAct == 1):
-                        RLegNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
+                        RLegNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
                     elif (contAct == 2):
-                        LLegNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
+                        LLegNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
                     elif (contAct == 3):
-                        LArmNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
+                        LArmNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
                     elif (contAct == 4):
                         TorsoNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
                     elif (contAct == 5):
-                        HeadNaoCal.append([trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
+                        HeadNaoCal.append( [trioXYZ[0], trioXYZ[1], trioXYZ[2], trioXYZ[3], trioXYZ[4], trioXYZ[5]])
 
                     if (contAct == 5):
                         contAct = 0
@@ -177,11 +183,18 @@ def setCalData(archNao, archP, wRot):
     filasActuadores.remove('')
     j = 0
     listaActuadores = [None]*6 #Se trabaja con cadenas de acción del NAO
-    for i, item in enumerate(filasActuadores):
-        #Se repite el nombre del marcador 3 veces(XYZ)
-        if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
-            listaActuadores[j] = str(item)
-            j+=1
+    if wRot == False:
+        for i, item in enumerate(filasActuadores):
+            #Se repite el nombre del marcador 3 veces(XYZ)
+            if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
+                listaActuadores[j] = str(item)
+                j+=1
+    else:
+        for i, item in enumerate(filasActuadores):
+            #Se repite el nombre del marcador 3 veces(XYZ)
+            if i==0 or i==8 or i==16 or i==32 or i==64 or i==128:
+                listaActuadores[j] = str(item)
+                j+=1
 
     ##Datos numericos a partir de la fila #8
     filasDatosP = filasPersona[7::]
@@ -190,36 +203,83 @@ def setCalData(archNao, archP, wRot):
         del filasDatosP[i][0]
         del filasDatosP[i][0]
 
-    contXYZ = 0
-    trioXYZ = [0.0,0.0,0.0]
-    contAct = 0
+    #Sin rotaciones
+    if wRot == False:
+        contXYZ = 0
+        trioXYZ = [0.0,0.0,0.0]
+        contAct = 0
 
-    for i,item in enumerate(filasDatosP):
-        for contTrio in range(0,18):
-            if contXYZ < 2:
-                trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
-                contXYZ+=1
-            elif contXYZ == 2:
-                trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
-                contXYZ = 0
+        for i,item in enumerate(filasDatosP):
+            for contTrio in range(0,18):
+                if contXYZ < 2:
+                    try:
+                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                    except ValueError:
+                        print "Cell is not a valid value"
+                    contXYZ+=1
+                elif contXYZ == 2:
+                    try:
+                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                    except ValueError:
+                        print "Cell is not a valid value"
+                    contXYZ = 0
 
-                if listaActuadores[contAct] == "RArm":
-                    RArmPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
-                elif listaActuadores[contAct] == "RLeg":
-                    RLegPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
-                elif listaActuadores[contAct] == "LLeg":
-                    LLegPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
-                elif listaActuadores[contAct] == "LArm":
-                    LArmPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
-                elif listaActuadores[contAct] == "Torso":
-                    TorsoPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
-                elif listaActuadores[contAct] == "Head":
-                    HeadPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    if listaActuadores[contAct] == "RArm":
+                        RArmPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    elif listaActuadores[contAct] == "RLeg":
+                        RLegPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    elif listaActuadores[contAct] == "LLeg":
+                        LLegPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    elif listaActuadores[contAct] == "LArm":
+                        LArmPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    elif listaActuadores[contAct] == "Torso":
+                        TorsoPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                    elif listaActuadores[contAct] == "Head":
+                        HeadPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
 
-                if (contAct == 5):
-                    contAct = 0
-                else:
-                    contAct+=1
+                    if (contAct == 5):
+                        contAct = 0
+                    else:
+                        contAct+=1
+    #Con rotaciones
+    else:
+        contXYZ = 0
+        trioXYZ = [0.0,0.0,0.0,0.0,0.0,0.0]
+        contAct = 0
+
+        for i,item in enumerate(filasDatosP):
+            for contTrio in range(0,48):
+                if contXYZ < 7:
+                    try:
+                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                    except ValueError:
+                        print "Cell is not a valid value"
+                    contXYZ+=1
+                elif contXYZ == 7:
+                    try:
+                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                    except ValueError:
+                        print "Cell is not a valid value"
+                    contXYZ = 0
+                    #X,wX y wZ están invertidas
+                    #Y y Z están intercambiadas, al igual que wY y wZ
+                    if listaActuadores[contAct] == "RArm":
+                        RArmPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                    elif listaActuadores[contAct] == "RLeg":
+                        RLegPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                    elif listaActuadores[contAct] == "LLeg":
+                        LLegPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                    elif listaActuadores[contAct] == "LArm":
+                        LArmPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                    elif listaActuadores[contAct] == "Torso":
+                        TorsoPCal.append([-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                    elif listaActuadores[contAct] == "Head":
+                        HeadPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+
+                    if (contAct == 5):
+                        contAct = 0
+                    else:
+                        contAct+=1
 
     return RArmNaoCal,RLegNaoCal,LLegNaoCal,LArmNaoCal,TorsoNaoCal,HeadNaoCal,RArmPCal,RLegPCal,LLegPCal,LArmPCal,TorsoPCal,HeadPCal
 
