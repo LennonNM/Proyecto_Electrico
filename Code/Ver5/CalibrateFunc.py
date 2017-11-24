@@ -105,13 +105,13 @@ def setCalData(archNao, archP, wRot):
                     try:
                         trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
                     contXYZ+=1
                 elif contXYZ == 2:
                     try:
                         trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
                     contXYZ = 0
 
                     if (contAct == 0):
@@ -144,14 +144,14 @@ def setCalData(archNao, archP, wRot):
                     try:
                         trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
 
                     contXYZ+=1
                 elif contXYZ == 5:
                     try:
                         trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
 
                     contXYZ = 0
 
@@ -215,13 +215,13 @@ def setCalData(archNao, archP, wRot):
                     try:
                         trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
                     contXYZ+=1
                 elif contXYZ == 2:
                     try:
                         trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
                     contXYZ = 0
 
                     if listaActuadores[contAct] == "RArm":
@@ -253,13 +253,13 @@ def setCalData(archNao, archP, wRot):
                     try:
                         trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
                     contXYZ+=1
                 elif contXYZ == 7:
                     try:
                         trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
                     except ValueError:
-                        print "Cell is not a valid value"
+                        print "Cell ignored"
                     contXYZ = 0
                     #X,wX y wZ están invertidas
                     #Y y Z están intercambiadas, al igual que wY y wZ

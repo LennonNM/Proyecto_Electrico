@@ -148,32 +148,20 @@ if __name__ == "__main__":
     rotation = "no"
     name = None
 
-    if len(sys.argv) <= 1:
-        print "Default robot IP", robotIP, " with default frame: ROBOT"
-        print "Include rotations:", rotation
-    elif len(sys.argv) == 2:
-        robotIP = sys.argv[1]
-        print "Using robot IP:", sys.argv[1], " with default frame: ROBOT"
-        print "Include rotations:", rotation
-    elif len(sys.argv) == 3:
-        robotIP = sys.argv[1]
-        frame = sys.argv[2]
-        print "Using robot IP:", sys.argv[1], " with frame:", frameRef
-        print "Include rotations:", rotation
-    elif len(sys.argv) == 4:
-        robotIP = sys.argv[1]
-        frame = sys.argv[2]
-        rotation = sys.argv[3]
-        print "Using robot IP:", sys.argv[1], " with frame:", frameRef
-        print "Include rotations:", rotation
-    elif len(sys.argv) == 5:
+    if len(sys.argv) == 5:
         robotIP = sys.argv[1]
         frame = sys.argv[2]
         rotation = sys.argv[3]
         name = sys.argv[4]
+        print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         print "Using robot IP:", sys.argv[1], " with frame:", frameRef
         print "Include rotations:", rotation
         print "Name of CSV file: NAO_", name
+        print "---------------------------------------------------------"
+        print "Starting to retrieve sensor values"
+        print "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    else:
+        error.abort("Expected 4 arguments on call.", "GetPositions")
 
     time.sleep(1.0)
     main(robotIP, frameRef, rotation, name)

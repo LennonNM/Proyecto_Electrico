@@ -27,7 +27,7 @@ import motion
 
 ##Custom
 import CSVMOCAPFunc as csvMocap
-import errorFunc as error
+import ErrorFunc as error
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -43,44 +43,40 @@ def main(robotIP,coreo,marcoRef=None):
     #SetUp
     PORT = 9559 #Puerto por defecto
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
-    print "Creating NAO objectos for posture and movement"
+    print "Creating NAO proxies for posture and movement"
     #creacion de objetos para usar los metodos de los API's del Nao
     try:
         #Para poder utilizar funciones de movimiento de los actuadores del NAO
         motionProxy = ALProxy("ALMotion", robotIP, PORT)
     except Exception,e:
-        print "Could not create proxy to ALMotion"
-        print "Error was: ",e
-        sys.exit(1)
+        error.abort("Could not create proxy to ALMotion.", "Move")
     try:
         #Para utilizar posiciones preestablecidas del NAO
         postureProxy = ALProxy("ALRobotPosture", robotIP, PORT)
     except Exception, e:
-        print "Could not create proxy to ALRobotPosture"
-        print "Error was: ", e
+        error.abort("Could not create proxy to ALRobotPosture.", "Move")
     print "Connection to NAO available."
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Inicializacion de parametros necesarios para el movimiento del NAO
-
+    print "----------------------------------"
     print "    Setting frame"
     ##Marco de Referencia a utilizar
-    if marcoRef is not None:
-        if marcoRef.upper() == "TORSO":
-            referencia = motion.FRAME_TORSO
-            print "        Frame set to TORSO"
-        elif marcoRef.upper() == "ROBOT":
-            referencia = motion.FRAME_ROBOT
-            print "        Frame set to ROBOT"
-    else: #Usa predeterminados
         #referencia = motion.FRAME_TORSO #Referencia centro del Torso
-                                        #Vale 0
+                                    #Vale 0
         #referencia = motion.FRAME_WORLD #Referencia estado inicial del robot al iniciar animacion
-                                        #Vale 1
-        referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
-                                        #Vale 2
-        print "        Frame set to default: ROBOT"
+                                    #Vale 1
+        #referencia = motion.FRAME_ROBOT #Referencia origen justo debajo del NAO entre los pies
+                                    #Vale 2
+    if marcoRef.upper() == "TORSO":
+        referencia = motion.FRAME_TORSO
+        print "        Frame set to TORSO"
+    elif marcoRef.upper() == "ROBOT":
+        referencia = motion.FRAME_ROBOT
+        print "        Frame set to ROBOT"
+    else:
+        error.abort("Did not receive a valid Reference Frame.", "Move")
 
     ##Relacion coordenadas con marco de referencia
     absolutos = True #True para usar coordenadas absolutas respecto al marco de referencia
@@ -98,16 +94,18 @@ def main(robotIP,coreo,marcoRef=None):
 
 #-------------------------------------------------------------------------------
 #Obtencion de la informacion del archivo CVS
+    print "----------------------------------"
     print "    Starting adjustment of data..."
     try:
         csvMocap.startAdjustData(coreo)
         print "    Adjustment completed."
     except Exception, e:
-        error.abort("Cannot access file to adjust", "Move.py")
+        error.abort("Cannot access file to adjust. Check path.", "Move")
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
     print "    Getting coordinates"
+    print "------------------------------------------------"
     if (referencia == 2):
         #Marco de referencia ROBOT
         listaCoordenadas = csvMocap.getCoordenadasROBOT()
@@ -116,11 +114,13 @@ def main(robotIP,coreo,marcoRef=None):
         listaCoordenadas = csvMocap.getCoordenadasTORSO()
 
     print "    Getting times"
+    print "------------------------------------------------"
     ##Lista de Tiempos
     listaTiempos = csvMocap.getTiemposArriba()
     #listaTiempos = csvMocap.getTiempos()
 
     print "    Getting actuator names"
+    print "------------------------------------------------"
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
     if marcoRef.upper() == "ROBOT":
@@ -133,9 +133,9 @@ def main(robotIP,coreo,marcoRef=None):
 #-------------------------------------------------------------------------------
 #Control del movimiento del NAO -- Teleoperacion
     #---------------------------------------------------------------------------
-    print "+++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     print "Setting up movement conditions"
-    print "+++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     #Preparativos iniciales para mover el NAO
 
     ##Iniciando motores y activando rigidez para poder iniciar el movimiento
@@ -192,7 +192,8 @@ def main(robotIP,coreo,marcoRef=None):
     print "    Balance constraints set"
 
     #---------------------------------------------------------------------------
-    print "++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     print "NAO movement starting..."
     #Inicio del movimiento
 
@@ -206,7 +207,8 @@ def main(robotIP,coreo,marcoRef=None):
     #        axisMask, [listaTiempos[0][a::a+1], listaTiempos[1][a::a+1], listaTiempos[2][a::a+1]], absolutos)
 
     print "NAO movement ended. Resting NAO."
-    print "++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     ##Tiempo de espera entre ultimo movimiento y estado de reposo del Nao, para
     ##agregar estabilidad
     time.sleep(2.0)
@@ -221,14 +223,16 @@ def main(robotIP,coreo,marcoRef=None):
     print "**********************"
 
     print "    NAO moving to posture: Crouch"
+    print "------------------------------------------------"
     ##Posicion de reposo seguras para finalizar la accion
     postureProxy.goToPosture("Crouch", 0.5)
     motionProxy.rest() # Apaga los motores del Nao
     ## **Si no se apagan es posible que se sobrecalienten aun estando en reposo**
     print "    NAO is resting."
-    print "+++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     print "Teleoperation ended."
-    print "+++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -236,27 +240,21 @@ if __name__ == "__main__":
     robotIp = "10.0.1.128" #Bato por red PrisNao
     #robotIp = "169.254.42.173" #Bato Local
     coreo = ""
-    marcoRef = None
+    marcoRef = "ROBOT"
 
-    if len(sys.argv) <= 1:
-        errorFunc.abort("None choreography file name received", "Move")
-    elif len(sys.argv) == 2:
-        coreo = sys.argv[1]
-        print "Using default robot IP: 10.0.1.128 (Optional default: 127.0.0.1)"
-        print "Choreography file to read:", coreo
-    elif len(sys.argv) == 3:
-        coreo   = sys.argv[1]
-        robotIp = sys.argv[2]
-        print "Using robot IP:", robotIp
-        print "Choreography file to read:", coreo
-        time.sleep(1.5) #Tiempo para que el usuario lea las indicaciones
-    elif len(sys.argv) >= 4:
+    if len(sys.argv) == 4:
         coreo    = sys.argv[1]
         robotIp  = sys.argv[2]
-        marcoRef = sys.argv[2]
+        marcoRef = sys.argv[3]
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         print "Using robot IP:", robotIp
         print "Choreography file to read:", coreo
         print "Using reference plane:", marcoRef
+        print "------------------------------------"
+        print "Initializing Teleoperation with Data from a MoCap recording"
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         time.sleep(1.5) #Tiempo para que el usuario lea las indicaciones
+    else:
+        error.abort("Expected 3 arguments on call.", "Move")
 
     main(robotIp,coreo,marcoRef)
