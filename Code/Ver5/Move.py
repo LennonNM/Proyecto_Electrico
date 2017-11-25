@@ -199,18 +199,37 @@ def main(robotIP,coreo,marcoRef):
     #motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
     ##Ejecucion de las posiciones obtenidas del archivo csvMocap, por cuadros (30 FPS)
     fps = 30
-    for i in range(0,len(listaCoordenadas[0]),fps):
-        motionProxy.positionInterpolations(listaActuadores, referencia,
-                                                                        [listaCoordenadas[0][i:i+fps-1],
-                                                                        listaCoordenadas[1][i:i+fps-1],
-                                                                        listaCoordenadas[2][i:i+fps-1]],
-                                                            axisMask,
-                                                                        [listaTiempos[0][i:i+fps-1],
-                                                                        listaTiempos[1][i:i+fps-1],
-                                                                        listaTiempos[2][i:i+fps-1]],
-                                                            absolutos)
-        #Obtiene posicion del COM general luego de posicionarse
-        print motionProxy.getCOM("Body",referencia,True)
+    
+    if marcoRef.upper() == "ARRIBA":
+        for i in range(0,len(listaCoordenadas[0]),fps):
+            motionProxy.positionInterpolations(listaActuadores, referencia,
+                                                                            [listaCoordenadas[0][i:i+fps-1],
+                                                                            listaCoordenadas[1][i:i+fps-1],
+                                                                            listaCoordenadas[2][i:i+fps-1]],
+                                                                axisMask,
+                                                                            [listaTiempos[0][i:i+fps-1],
+                                                                            listaTiempos[1][i:i+fps-1],
+                                                                            listaTiempos[2][i:i+fps-1]],
+                                                                absolutos)
+            #Obtiene posicion del COM general luego de posicionarse
+            print motionProxy.getCOM("Body",referencia,True)
+    elif marcoRef.upper() == "ROBOT":
+        for i in range(0,len(listaCoordenadas[0]),fps):
+            motionProxy.positionInterpolations(listaActuadores, referencia,[
+                                                                            listaCoordenadas[0][i:i+fps-1],
+                                                                            listaCoordenadas[1][i:i+fps-1],
+                                                                            listaCoordenadas[2][i:i+fps-1],
+                                                                            listaCoordenadas[3][i:i+fps-1]
+                                                                          ],
+                                                                axisMask, [
+                                                                            listaTiempos[0][i:i+fps-1],
+                                                                            listaTiempos[1][i:i+fps-1],
+                                                                            listaTiempos[2][i:i+fps-1],
+                                                                            listaTiempos[3][i:i+fps-1]
+                                                                          ],
+                                                                absolutos)
+            #Obtiene posicion del COM general luego de posicionarse
+            print motionProxy.getCOM("Body",referencia,True)
 
     print "NAO movement ended. Resting NAO."
     print "++++++++++++++++++++++++++++++++++++++++++++++++"

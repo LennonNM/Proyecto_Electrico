@@ -355,11 +355,11 @@ def startAdjustData(nombreArchivo):
     global coordenadasArriba
     coordenadasArriba = [actuador[0], actuador[3], actuador[4]]
     global coordenadasROBOT
-    coordenadasROBOT = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
+    coordenadasROBOT = [actuador[0], actuador[3], actuador[4], actuador[5]]
 
     ##Si los datos obtenidos vienen con referencia al TORSO no es necesario este
     ##proceso de cambio de referencia
-    listaDeActuadores = deepcopy(coordenadasROBOT)
+    listaDeActuadores = deepcopy(coordenadasCompletas)
     ## RArm
     for i, item in enumerate(listaDeActuadores[0]):
         for j, item2 in enumerate(listaDeActuadores[0][j]):
