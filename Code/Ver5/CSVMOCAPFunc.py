@@ -21,12 +21,14 @@ import ErrorFunc as error
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Globales
-coordenadasArriba = list()
-coordenadasCompletasROBOT = list()
-coordenadasCompletasTORSO = list()
-listaTiemposROBOT = list()
-listaTiemposTORSO = list()
-listaTiemposArriba = list()
+coordenadasArriba     = list()
+coordenadasROBOT      = list()
+coordenadasTORSO      = list()
+coordenadasCompletas  = list()
+listaTiemposROBOT     = list()
+listaTiemposTORSO     = list()
+listaTiemposArriba    = list()
+listaTiemposCompletos = list()
 
 #Inicia el procesamiento de los archivos CSV necesarios para el ajuste de datos
 #Recibe como parametro el nombre del archivo CSV con las coordenadas a leer
@@ -348,14 +350,16 @@ def startAdjustData(nombreArchivo):
     #actuador independiente, en el orden segun el archivo CSV
 
     ##Generando Vector completo como lista de vectores para cada actuador
-    global coordenadasCompletasROBOT
-    coordenadasCompletasROBOT = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
+    global coordenadasCompletas
+    coordenadasCompletas = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
     global coordenadasArriba
     coordenadasArriba = [actuador[0], actuador[3], actuador[4]]
+    global coordenadasROBOT
+    coordenadasROBOT = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
 
     ##Si los datos obtenidos vienen con referencia al TORSO no es necesario este
     ##proceso de cambio de referencia
-    listaDeActuadores = deepcopy(coordenadasCompletasROBOT)
+    listaDeActuadores = deepcopy(coordenadasROBOT)
     ## RArm
     for i, item in enumerate(listaDeActuadores[0]):
         for j, item2 in enumerate(listaDeActuadores[0][j]):
@@ -381,8 +385,8 @@ def startAdjustData(nombreArchivo):
         for j, item2 in enumerate(listaDeActuadores[4][j]):
             listaDeActuadores[4][i][j] = round((listaDeActuadores[4][i][j] - listaDeActuadores[4][i][j]), 2)
     #Genera vector con datos respecto al TORSO
-    global coordenadasCompletasTORSO
-    coordenadasCompletasTORSO = [listaDeActuadores[0], listaDeActuadores[1], listaDeActuadores[2], listaDeActuadores[3], listaDeActuadores[5]]
+    global coordenadasTORSO
+    coordenadasTORSO = [listaDeActuadores[0], listaDeActuadores[1], listaDeActuadores[2], listaDeActuadores[3], listaDeActuadores[5]]
 
     #-------------------------------------------------------------------------------
     #Base de tiempo predeterminado para cada vector de la animacion
@@ -393,20 +397,24 @@ def startAdjustData(nombreArchivo):
     #Se maneja un vector de tiempos independiente para cada actuador, con longitud
     #correspondiente a la lista con coordenadas respectivo al actuador
     coef = 0.05
+    #coef = 0.1
     global listaTiemposROBOT
-    listaTiemposROBOT = [None]*len(coordenadasCompletasROBOT)
-    for i in range(len(coordenadasCompletasROBOT)):
-        listaTiemposROBOT[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletasROBOT[i]))]
-
+    listaTiemposROBOT = [None]*len(coordenadasROBOT)
+    for i in range(len(coordenadasROBOT)):
+        listaTiemposROBOT[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasROBOT[i]))]
+    global listaTiemposCompletos
+    listaTiemposCompletos = [None]*len(coordenadasCompletas)
+    for i in range(len(coordenadasROBOT)):
+        listaTiemposCompletos[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletas[i]))]
     global listaTiemposArriba
     listaTiemposArriba = [None]*len(coordenadasArriba)
     for i in range(len(coordenadasArriba)):
         listaTiemposArriba[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasArriba[i]))]
 
     global listaTiemposTORSO
-    listaTiemposTORSO = [None]*len(coordenadasCompletasTORSO)
-    for i in range(len(coordenadasCompletasTORSO)):
-        listaTiemposTORSO[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasCompletasTORSO[i]))]
+    listaTiemposTORSO = [None]*len(coordenadasTORSO)
+    for i in range(len(coordenadasTORSO)):
+        listaTiemposTORSO[i]  = [round(coef*(j+1),2) for j in range(len(coordenadasTORSO[i]))]
 
     print "Coordinates generated. Ready for movement."
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -419,11 +427,11 @@ def startAdjustData(nombreArchivo):
 ##segun el marco de referencia
 def getCoordenadas(frame):
     if frame.upper() == "ROBOT":
-        return coordenadasCompletasROBOT
+        return coordenadasROBOT
     elif frame.upper() == "TORSO":
-        return coordenadasCompletasTORSO
+        return coordenadasTORSO
     elif frame.upper() == "ARRIBA":
-        return coordenadasCompletasArriba
+        return coordenadasArriba
     else:
         error.abort("Did not receive a valid reference frame.", None, "CSVMOCAPFunc")
 
