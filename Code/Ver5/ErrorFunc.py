@@ -14,7 +14,7 @@ def abort(explanation, value=None, program=None, called=None):
     print "ERROR on Teleoperation Execution:"
     if value is not None:
         print "        Received", value
-        print explanation
+        print "   ", explanation
         if called is not None:
             print "        Called from:", called
         if program is not None:
@@ -22,7 +22,7 @@ def abort(explanation, value=None, program=None, called=None):
         else:
             print "    Aborting process"
     else:
-        print explanation
+        print "   ", explanation
         if called is not None:
             print "        Called from:", called
         if program is not None:

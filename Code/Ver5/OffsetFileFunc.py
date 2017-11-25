@@ -40,7 +40,7 @@ def getOffsets():
     #---------------------------------------------------------------------------
     ##Obtiene grado del polinomio
     polDegree = int(filas[0].pop(0))
-    isRot = int(filas[0].pop(0))
+    isRot = filas[0].pop(0)
     ##Borrando encabezado
     del filas[0]
     #---------------------------------------------------------------------------

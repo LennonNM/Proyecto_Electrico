@@ -93,7 +93,7 @@ def setCalData(archNao, archP, wRot):
         del filasDatosNao[i][0]
         del filasDatosNao[i][0]
 
-    if wRot == False:
+    if wRot.lower() == "no":
         #Sin rotaciones
         contXYZ = 0
         trioXYZ = [0.0,0.0,0.0]
@@ -132,7 +132,7 @@ def setCalData(archNao, archP, wRot):
                     else:
                         contAct+=1
 
-    else:
+    elif wRot.lower() == "yes":
         #Con rotaciones
         contXYZ = 0
         trioXYZ = [0.0,0.0,0.0,0.0,0.0,0.0]
@@ -182,17 +182,17 @@ def setCalData(archNao, archP, wRot):
     filasActuadores.remove('')
     filasActuadores.remove('')
     j = 0
-    listaActuadores = [None]*6 #Se trabaja con cadenas de acción del NAO
-    if wRot == False:
+    listaActuadores = [None]*6 #Se trabaja con cadenas de accion del NAO
+    if wRot.lower() == "no":
         for i, item in enumerate(filasActuadores):
             #Se repite el nombre del marcador 3 veces(XYZ)
             if i==0 or i==3 or i==6 or i==9 or i==12 or i==15:
                 listaActuadores[j] = str(item)
                 j+=1
-    else:
+    elif wRot.lower() == "yes":
         for i, item in enumerate(filasActuadores):
             #Se repite el nombre del marcador 3 veces(XYZ)
-            if i==0 or i==8 or i==16 or i==32 or i==64 or i==128:
+            if i==0 or i==8 or i==16 or i==24 or i==32 or i==40:
                 listaActuadores[j] = str(item)
                 j+=1
 
@@ -204,7 +204,7 @@ def setCalData(archNao, archP, wRot):
         del filasDatosP[i][0]
 
     #Sin rotaciones
-    if wRot == False:
+    if wRot.lower() == "no":
         contXYZ = 0
         trioXYZ = [0.0,0.0,0.0]
         contAct = 0
@@ -242,39 +242,46 @@ def setCalData(archNao, archP, wRot):
                     else:
                         contAct+=1
     #Con rotaciones
-    else:
+    elif wRot.lower() == "yes":
         contXYZ = 0
-        trioXYZ = [0.0,0.0,0.0,0.0,0.0,0.0]
+        trioXYZ = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0] #Incluye wX,wY,wZ,W,X,Y,Z,Error
         contAct = 0
+        temp = 0
 
         for i,item in enumerate(filasDatosP):
             for contTrio in range(0,48):
                 if contXYZ < 7:
+                    temp = filasDatosP[i].pop(0)
                     try:
-                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                        trioXYZ[contXYZ] = float(temp)
                     except ValueError:
-                        print "Cell ignored"
+                        #Es una celda marcada como invalida, luego se procesa
+                        ##Las celdas invalidas no se usan para calibracion porque no dan
+                        ##un buen ajuste temporal entre los datos, se marcan con la palabra
+                        ##'Empty' de manera manual en el CSV a leer
+                        trioXYZ[contXYZ] = temp
                     contXYZ+=1
                 elif contXYZ == 7:
+                    temp = filasDatosP[i].pop(0)
                     try:
-                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                        trioXYZ[contXYZ] = float(temp)
                     except ValueError:
-                        print "Cell ignored"
+                        trioXYZ[contXYZ] = temp
                     contXYZ = 0
-                    #X,wX y wZ están invertidas
-                    #Y y Z están intercambiadas, al igual que wY y wZ
+                    #Y y Z estan intercambiadas, al igual que wY y wZ
+                    #Solo se ocupan X,Y,Z,wX,wY,wZ
                     if listaActuadores[contAct] == "RArm":
-                        RArmPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                        RArmPCal.append( [trioXYZ[4],trioXYZ[6],trioXYZ[5],trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "RLeg":
-                        RLegPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                        RLegPCal.append( [trioXYZ[4],trioXYZ[6],trioXYZ[5],trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "LLeg":
-                        LLegPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                        LLegPCal.append( [trioXYZ[4],trioXYZ[6],trioXYZ[5],trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "LArm":
-                        LArmPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                        LArmPCal.append( [trioXYZ[4],trioXYZ[6],trioXYZ[5],trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "Torso":
-                        TorsoPCal.append([-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                        TorsoPCal.append([trioXYZ[4],trioXYZ[6],trioXYZ[5],trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "Head":
-                        HeadPCal.append( [-1*trioXYZ[4],trioXYZ[6],trioXYZ[5],-1*trioXYZ[0], trioXYZ[2], -1*trioXYZ[1]])
+                        HeadPCal.append( [trioXYZ[4],trioXYZ[6],trioXYZ[5],trioXYZ[0], trioXYZ[2], trioXYZ[1]])
 
                     if (contAct == 5):
                         contAct = 0
@@ -291,35 +298,42 @@ def setCalData(archNao, archP, wRot):
 #Devuelve una lista con los terminos del ajuste polinomial para X, Y y Z del
 #actuador recibido
 def getTerms(listNAO, listP, degree, wRot):
-    naoX = list()
-    naoY = list()
-    naoZ = list()
-    pX = list()
-    pY = list()
-    pZ = list()
-    if wRot == False:
+    naoX  = list()
+    naoY  = list()
+    naoZ  = list()
+    naowX = list()
+    naowY = list()
+    naowZ = list()
+    pX    = list()
+    pY    = list()
+    pZ    = list()
+    pwX    = list()
+    pwY    = list()
+    pwZ    = list()
+    dif = 0
+
+    if wRot.lower() == "no":
         pl = [None]*3
-    else:
+    elif wRot.lower() == "yes":
         pl = [None]*6
 
-	#Se ocupa que ambos arreglos a comparar tengan la misma cantidad de datos,
-	#por lo que se utiliza la longitud mas corta (suele ser la de datos del NAO)
-    n = min(len(listNAO),len(listP))
-
+    #---------------------------------------------------------------------------
 	#Separa datos X, Y y Z en grupos
-    if wRot == False:
-        for i in range(n):
+
+    if wRot.lower() == "no":
             #Datos NAO
+        for i in range(len(listNAO)):
             naoX.append(listNAO[i][0])
             naoY.append(listNAO[i][1])
             naoZ.append(listNAO[i][2])
             #Daos MoCap
+        for i in range(len(listP)):
             pX.append(listP[i][0])
             pY.append(listP[i][1])
             pZ.append(listP[i][2])
-    else:
-        for i in range(n):
+    elif wRot.lower() == "yes":
             #Datos NAO
+        for i in range(len(listNAO)):
             naoX.append(listNAO[i][0])
             naoY.append(listNAO[i][1])
             naoZ.append(listNAO[i][2])
@@ -327,71 +341,79 @@ def getTerms(listNAO, listP, degree, wRot):
             naowY.append(listNAO[i][4])
             naowZ.append(listNAO[i][5])
             #Datos MoCap
-            pX.append(listP[i][0])
-            pY.append(listP[i][1])
-            pZ.append(listP[i][2])
-            pwX.append(listP[i][3])
-            pwY.append(listP[i][4])
-            pwZ.append(listP[i][5])
+        for i in range(len(listP)):
+            ##X
+            if isinstance(listP[i][0], float):
+                pX.append(listP[i][0])
+            ##Y
+            if isinstance(listP[i][1], float):
+                pY.append(listP[i][1])
+            ##Z
+            if isinstance(listP[i][2], float):
+                pZ.append(listP[i][2])
+            ##wX
+            if isinstance(listP[i][3], float):
+                pwX.append(listP[i][3])
+            ##wY
+            if isinstance(listP[i][4], float):
+                pwY.append(listP[i][4])
+            ##wZ
+            if isinstance(listP[i][5], float):
+                pwZ.append(listP[i][5])
 
+        #Manejo de diferentes longitudes de las listas, hace que las listas tengan
+        #la misma longitud si correrlas temporalmente, segun como estaban acomodadas
+        #desde la comparacio grafica
+        ##X
+        dif = len(pX)-len(naoX)
+        if dif < 0:
+            del naoX[len(naoX)-1+dif:len(naoX)-1]
+        elif dif > 0:
+            del pX[len(pX)-1-dif:len(pX)-1]
+        ##Y
+        dif = len(pY)-len(naoY)
+        if dif < 0:
+            del naoY[len(naoY)-1+dif:len(naoY)-1]
+        elif dif > 0:
+            del pY[len(pY)-1-dif:len(pY)-1]
+        ##Z
+        dif = len(pZ)-len(naoZ)
+        if dif < 0:
+            del naoZ[len(naoZ)-1+dif:len(naoZ)-1]
+        elif dif > 0:
+            del pZ[len(pZ)-1-dif:len(pZ)-1]
+        ##wX
+        dif = len(pwX)-len(naowX)
+        if dif < 0:
+            del naowX[len(naowX)-1+dif:len(naowX)-1]
+        elif dif > 0:
+            del pwX[len(pwX)-1-dif:len(pwX)-1]
+        ##wY
+        dif = len(pwY)-len(naowY)
+        if dif < 0:
+            del naowY[len(naowY)-1+dif:len(naowY)-1]
+        elif dif > 0:
+            del pwY[len(pwY)-1-dif:len(pwY)-1]
+        ##wZ
+        dif = len(pwZ)-len(naowZ)
+        if dif < 0:
+            del naowZ[len(naowZ)-1+dif:len(naowZ)-1]
+        elif dif > 0:
+            del pwZ[len(pwZ)-1-dif:len(pwZ)-1]
+
+    #---------------------------------------------------------------------------
 	#Obtiene los terminos de la relacion polinomial con grado 'degree'
-	#Por defecto se calcula regresion lineal
+    ##Se ocupa que ambos arreglos a comparar tengan la misma cantidad de datos,
+    ##por lo que se supone que en el estudio de comparaciones se ajusto las
+    ##longitudes para que sean iguales
 
     pl[0] = list(np.polyfit(pX,naoX,degree))
     pl[1] = list(np.polyfit(pY,naoY,degree))
     pl[2] = list(np.polyfit(pZ,naoZ,degree))
 
-    if wRot == True:
+    if wRot.lower() == "yes":
         pl[3] = list(np.polyfit(pwX,naowX,degree))
         pl[4] = list(np.polyfit(pwY,naowY,degree))
         pl[5] = list(np.polyfit(pwZ,naowZ,degree))
 
     return pl
-
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-#Obtiene el promedio de los terminos usados en todas las grabaciones bases
-#para la calibracion, para un mismo actuador
-#Recibe una lista con los terminos polinomiales de cada grabacion utilizada
-#para la calibracion. devuelve el promedio del ajuste polinomial para X, Y y Z
-def setAdjustAct(listTerms):
-    n = len(listTerms[0][0])
-    listX = list()
-    listY = list()
-    listZ = list()
-    termsX = [[] for x in range(n)]
-    termsY = [[] for x in range(n)]
-    termsZ = [[] for x in range(n)]
-    promX = [[] for x in range(n)]
-    promY = [[] for x in range(n)]
-    promZ = [[] for x in range(n)]
-
-    ##Separa datos en grupos de X, Y y Z
-    for item in listTerms:
-        listX.append(item[0])
-        listY.append(item[1])
-        listZ.append(item[2])
-
-    ##Separa para X,Y y Z en listas de terminos, segun la cantidad de terminos
-    ##definidos por la relacion polinomial utilizada
-    for item in listX:
-        for i in range(len(item)):
-            termsX[i].append(item[i])
-    for item in listY:
-        for i in range(len(item)):
-            termsY[i].append(item[i])
-    for item in listZ:
-        for i in range(len(item)):
-            termsZ[i].append(item[i])
-
-    ##Obtiene el promedio de cada termino para X, Y y Z
-    for i in range(n):
-        promX[i] = np.mean(termsX[i])
-    for i in range(n):
-        promY[i] = np.mean(termsY[i])
-    for i in range(n):
-        promZ[i] = np.mean(termsZ[i])
-
-    ##Retorna los nuevos terminos a utilizar para las relaciones polinomiales
-    ##de X, Y y Z para un solo actuador
-    return promX,promY,promZ

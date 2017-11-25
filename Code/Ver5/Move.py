@@ -39,7 +39,7 @@ def StiffnessOn(proxy):
     pTimeLists = 1.0
     proxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 #-------------------------------------------------------------------------------
-def main(robotIP,coreo,marcoRef=None):
+def main(robotIP,coreo,marcoRef):
     #SetUp
     PORT = 9559 #Puerto por defecto
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -72,7 +72,7 @@ def main(robotIP,coreo,marcoRef=None):
     if marcoRef.upper() == "TORSO":
         referencia = motion.FRAME_TORSO
         print "        Frame set to TORSO"
-    elif marcoRef.upper() == "ROBOT":
+    elif marcoRef.upper() == "ROBOT" or marcoRef.upper() == "ARRIBA":
         referencia = motion.FRAME_ROBOT
         print "        Frame set to ROBOT"
     else:
@@ -86,9 +86,10 @@ def main(robotIP,coreo,marcoRef=None):
     #### AXIS_MASK_ALL controla XYZ y rotacion
     #### AXIS_MASK_VEL controla solo XYZ
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
-    if marcoRef.upper() == "ROBOT":
-        #axisMask = [ motion.AXIS_MASK_VEL ]*4
-        axisMask = [ motion.AXIS_MASK_VEL ]*3 #Usando ARRIBA
+    if marcoRef.upper() == "ARRIBA":
+        axisMask = [ motion.AXIS_MASK_VEL ]*3
+    elif marcoRef.upper() == "ROBOT":
+        axisMask = [ motion.AXIS_MASK_VEL ]*4
     elif marcoRef.upper() == "TORSO":
         axisMask = [ motion.AXIS_MASK_VEL ]*5
 
@@ -96,38 +97,33 @@ def main(robotIP,coreo,marcoRef=None):
 #Obtencion de la informacion del archivo CVS
     print "----------------------------------"
     print "    Starting adjustment of data..."
-    try:
-        csvMocap.startAdjustData(coreo)
-        print "    Adjustment completed."
-    except Exception, e:
-        error.abort("Cannot access file to adjust. Check path.", "Move")
+    #Realiza ajuste de los datos de la grabacion
+    csvMocap.startAdjustData(coreo)
+
+    print "    Adjustment completed."
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
     ##Lista con vectores de las posiciones de los actuadores en orden correspondiente
     ##al orden de los actuadores a utilizar
     print "    Getting coordinates"
     print "------------------------------------------------"
-    if (referencia == 2):
-        #Marco de referencia ROBOT
-        listaCoordenadas = csvMocap.getCoordenadasROBOT()
-    elif (referencia == 0):
-        #Con ajuste respecto al TORSO
-        listaCoordenadas = csvMocap.getCoordenadasTORSO()
+    #Obtiene lista con coordenadas
+    listaCoordenadas = csvMocap.getCoordenadas(marcoRef)
 
     print "    Getting times"
     print "------------------------------------------------"
     ##Lista de Tiempos
-    listaTiempos = csvMocap.getTiemposArriba()
-    #listaTiempos = csvMocap.getTiempos()
+    listaTiempos = csvMocap.getTiempos(marcoRef)
 
     print "    Getting actuator names"
     print "------------------------------------------------"
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
     if marcoRef.upper() == "ROBOT":
-        #listaActuadores = ["RArm", "LArm", "Torso", "Head"]
-        listaActuadores = ["RArm", "LArm", "Torso"] #Usando ARRIBA
+        listaActuadores = ["RArm", "LArm", "Torso", "Head"]
     elif marcoRef.upper() == "TORSO":
         listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Head"]
+    elif marcoRef.upper() == "ARRIBA":
+        listaActuadores = ["RArm", "LArm", "Torso"]
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -200,11 +196,9 @@ def main(robotIP,coreo,marcoRef=None):
     ##Tiempo de espera para iniciar movimiento
     time.sleep(1.0)
     ##Ejecucion de las posiciones obtenidas del archivo csvMocap
+    print len(listaActuadores)
+    print len(listaTiempos)
     motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
-    #for a in range(len(listaCoordenadas)-1):
-
-    #    motionProxy.positionInterpolations(listaActuadores, referencia, [listaCoordenadas[0][a::a+1], listaCoordenadas[1][a::a+1], listaCoordenadas[2][a::a+1]],
-    #        axisMask, [listaTiempos[0][a::a+1], listaTiempos[1][a::a+1], listaTiempos[2][a::a+1]], absolutos)
 
     print "NAO movement ended. Resting NAO."
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
