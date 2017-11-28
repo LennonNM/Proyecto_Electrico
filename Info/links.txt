@@ -1,3 +1,11 @@
+#Whole Body Motion
+http://ii.tudelft.nl/naodoc/site_en/reddoc/motion/presentation_wholeBodyMotion.html
+https://www.cs.sfu.ca/~li/papers-on-line/JieLei-SP-2015.pdf
+http://scholarcommons.usf.edu/cgi/viewcontent.cgi?article=5337&context=etd
+http://staff.scm.uws.edu.au/~anton/Publications/acra_2012.pdf
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.487.8136&rep=rep1&type=pdf
+http://homepage.tudelft.nl/h05k3/pubs/JCISEMotionImitation.pdf
+
 #Cartesian NAO
 http://doc.aldebaran.com/1-14/naoqi/motion/control-cartesian.html
 http://www.bx.psu.edu/~thanh/naoqi/naoqi/motion/control-cartesian-tuto.html
@@ -21,11 +29,6 @@ http://v110.wiki.optitrack.com/index.php?title=OptiTrack_Documentation_Wiki
 
 #Balance Nao
 http://ii.tudelft.nl/naodoc/site_en/reddoc/motion/presentation_balance.html
-
-#Whole Body Motion
-http://ii.tudelft.nl/naodoc/site_en/reddoc/motion/presentation_wholeBodyMotion.html
-https://www.cs.sfu.ca/~li/papers-on-line/JieLei-SP-2015.pdf
-http://scholarcommons.usf.edu/cgi/viewcontent.cgi?article=5337&context=etd
 
 #ALRobotPosture
 http://doc.aldebaran.com/2-1/naoqi/motion/alrobotposture.html
