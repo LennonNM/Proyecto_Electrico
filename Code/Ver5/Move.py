@@ -79,7 +79,8 @@ def main(robotIP,coreo,marcoRef):
         error.abort("Did not receive a valid Reference Frame.", "Move")
 
     ##Relacion coordenadas con marco de referencia
-    absolutos = True #True para usar coordenadas absolutas respecto al marco de referencia
+        #True para usar coordenadas absolutas respecto al marco de referencia
+    absolutos = True
 
     ##Grados de libertad a utilizar
     ###Debe incluir un elemento por cada actuador a controlar
@@ -150,14 +151,15 @@ def main(robotIP,coreo,marcoRef):
     ### **Tener en cuenta que ahora corre peligro de caidas daninas, el Nao Debe
     ### estar en un ambiente controlado y el usuario atento a caidas para que
     ### no sufra danos evitables**
-    print "***************************************************************************"
-    print "***************************************************************************"
-    print "    Disabling Fall Manager"
-    print "WARNING: NAO wont react automatically to falls."
-    print "Please take care of the NAO robot during the execution of the teleoperation"
-    print "***************************************************************************"
-    print "***************************************************************************"
-    print "\n"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "          Disabling Fall Manager            "
+    print "                  WARNING:                  "
+    print "   NAO wont react automatically to falls.   "
+    print "Please take care of the NAO robot during the"
+    print "       execution of the teleoperation       "
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
+    print "++++++++++++++++++++++++++++++++++++++++++++++++"
     time.sleep(3.0)
     motionProxy.setFallManagerEnabled(False)
 
@@ -179,7 +181,7 @@ def main(robotIP,coreo,marcoRef):
     ###Habilita soporte de ambas piernas con restricciones
     motionProxy.wbFootState(estadoFijo, soportePiernas)
     ###Para usar piernas con estados individuales
-    #motionProxy.wbFootState(estadoPlano, soporteDer)
+    #motionProxy.wbFootState(estadoFijo, soporteDer)
     #motionProxy.wbFootState(estadoLibre, soporteIzq)
 
     ##Habilita balance del cuerpo sobre el soporte definido
@@ -199,20 +201,29 @@ def main(robotIP,coreo,marcoRef):
     #motionProxy.positionInterpolations(listaActuadores, referencia, listaCoordenadas, axisMask, listaTiempos, absolutos)
     ##Ejecucion de las posiciones obtenidas del archivo csvMocap, por cuadros (30 FPS)
     fps = 30
-    
+    COM = [0.0,0.0,0.0]
+
+    #motion.wbEnableEffectorOptimization(effectorName, isActive);
+
+    #Utiliza 3 actuadores: RArm, LArm y Torso
     if marcoRef.upper() == "ARRIBA":
         for i in range(0,len(listaCoordenadas[0]),fps):
-            motionProxy.positionInterpolations(listaActuadores, referencia,
-                                                                            [listaCoordenadas[0][i:i+fps-1],
-                                                                            listaCoordenadas[1][i:i+fps-1],
-                                                                            listaCoordenadas[2][i:i+fps-1]],
-                                                                axisMask,
-                                                                            [listaTiempos[0][i:i+fps-1],
-                                                                            listaTiempos[1][i:i+fps-1],
-                                                                            listaTiempos[2][i:i+fps-1]],
+            motionProxy.positionInterpolations(listaActuadores, referencia, [
+                                                                             listaCoordenadas[0][i:i+fps-1],
+                                                                             listaCoordenadas[1][i:i+fps-1],
+                                                                             listaCoordenadas[2][i:i+fps-1]
+                                                                            ],
+                                                                axisMask,   [
+                                                                             listaTiempos[0][0:len(listaCoordenadas[0][i:i+fps-1])],
+                                                                             listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])],
+                                                                             listaTiempos[2][0:len(listaCoordenadas[2][i:i+fps-1])]
+                                                                            ],
                                                                 absolutos)
             #Obtiene posicion del COM general luego de posicionarse
-            print motionProxy.getCOM("Body",referencia,True)
+            COM = motionProxy.getCOM("Body",referencia,True)
+            if COM[1] >
+
+    #Utiliza 4 actuadores: RArm, LArm, Torso y Head
     elif marcoRef.upper() == "ROBOT":
         for i in range(0,len(listaCoordenadas[0]),fps):
             motionProxy.positionInterpolations(listaActuadores, referencia,[
@@ -222,10 +233,31 @@ def main(robotIP,coreo,marcoRef):
                                                                             listaCoordenadas[3][i:i+fps-1]
                                                                           ],
                                                                 axisMask, [
-                                                                            listaTiempos[0][i:i+fps-1],
-                                                                            listaTiempos[1][i:i+fps-1],
-                                                                            listaTiempos[2][i:i+fps-1],
-                                                                            listaTiempos[3][i:i+fps-1]
+                                                                            listaTiempos[0][0:len(listaCoordenadas[0][i:i+fps-1])],
+                                                                            listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])],
+                                                                            listaTiempos[2][0:len(listaCoordenadas[2][i:i+fps-1])],
+                                                                            listaTiempos[3][0:len(listaCoordenadas[3][i:i+fps-1])]
+                                                                          ],
+                                                                absolutos)
+            #Obtiene posicion del COM general luego de posicionarse
+            print motionProxy.getCOM("Body",referencia,True)
+
+    #Utiliza 6 actuadores: RArm, RLeg, LLeg, LArm, Torso y Head
+    elif marcoRef.upper() == "TORSO":
+        for i in range(0,len(listaCoordenadas[0]),fps):
+            motionProxy.positionInterpolations(listaActuadores, referencia,[
+                                                                            listaCoordenadas[0][i:i+fps-1],
+                                                                            listaCoordenadas[1][i:i+fps-1],
+                                                                            listaCoordenadas[2][i:i+fps-1],
+                                                                            listaCoordenadas[3][i:i+fps-1],
+                                                                            listaCoordenadas[4][i:i+fps-1]
+                                                                          ],
+                                                                axisMask, [
+                                                                            listaTiempos[0][0:len(listaCoordenadas[0][i:i+fps-1])],
+                                                                            listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])],
+                                                                            listaTiempos[2][0:len(listaCoordenadas[2][i:i+fps-1])],
+                                                                            listaTiempos[3][0:len(listaCoordenadas[3][i:i+fps-1])],
+                                                                            listaTiempos[4][0:len(listaCoordenadas[4][i:i+fps-1])]
                                                                           ],
                                                                 absolutos)
             #Obtiene posicion del COM general luego de posicionarse
@@ -268,8 +300,8 @@ if __name__ == "__main__":
     marcoRef = "ROBOT"
 
     if len(sys.argv) == 4:
-        coreo    = sys.argv[1]
-        robotIp  = sys.argv[2]
+        robotIp  = sys.argv[1]
+        coreo    = sys.argv[2]
         marcoRef = sys.argv[3]
         print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         print "Using robot IP:", robotIp

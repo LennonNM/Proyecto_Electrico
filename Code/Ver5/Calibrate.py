@@ -28,7 +28,7 @@ import OffsetFileFunc as offset
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-def main(polDeg, humanDir, naoDir, wRot):
+def main(polDeg, wRot, humanDir, naoDir):
     #Datos para calibrar el movimiento de los brazos
     ###Obtiene datos desde los csv correspondientes para la primer pose de calibracion
     RArmNaoA,RLegNaoA,LLegNaoA,LArmNaoA,TorsoNaoA,HeadNaoA,RArmPA,RLegPA,LLegPA,LArmPA,TorsoPA,HeadPA = cal.setCalData( naoDir + "/" + "Brazos_NAO.csv", humanDir + "/" + "Brazos_P.csv", wRot)
@@ -67,15 +67,30 @@ def main(polDeg, humanDir, naoDir, wRot):
 if __name__ == "__main__":
     polDeg   = 2 #Polinomio grado 2 por defecto
     humanDir = ""
-    naoDir = ""
+    naoDir = "RigidBody_Default"
     wRot = "yes"
 
-    if len(sys.argv) == 5:
+    if len(sys.argv) == 4:
         try:
             polDeg = int(sys.argv[1])
+            wRot = (sys.argv[4]).lower()
+            humanDir = sys.argv[2]
+            print "++++++++++++++++++++++++++++++++++++"
+            print "Using Pol degree:", polDeg
+            print "Include rotations:", wRot
+            print "Reading Human data from dir:", humanDir
+            print "Reading NAO data from default directory .../Cal/Nao/RigidBody_Default"
+            print "------------------------------------"
+            print "Starting calibration process..."
+            print "++++++++++++++++++++++++++++++++++++"
+        except ValueError as e:
+            error.abort("Expected int as argument in main function", None,"Calibrate")
+    elif len(sys.argv) == 5:
+        try:
+            polDeg = int(sys.argv[1])
+            wRot = (sys.argv[4]).lower()
             humanDir = sys.argv[2]
             naoDir = sys.argv[3]
-            wRot = (sys.argv[4]).lower()
             print "++++++++++++++++++++++++++++++++++++"
             print "Using Pol degree:", polDeg
             print "Include rotations:", wRot
@@ -87,7 +102,7 @@ if __name__ == "__main__":
         except ValueError as e:
             error.abort("Expected int as argument in main function", None,"Calibrate")
     else:
-        error.abort("Expected 4 arguments on call.", None, "Calibrate")
+        error.abort("Expected 3 or 4 arguments on call.", None, "Calibrate")
 
     time.sleep(1.0)
-    main(polDeg, humanDir, naoDir, wRot)
+    main(polDeg, wRot, humanDir, naoDir)

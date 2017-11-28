@@ -43,6 +43,7 @@ def startAdjustData(nombreArchivo):
     except Exception,e:
         error.abort("Failed to get offsets from file offset.csv, check file", None, "CSVMOCAPFunc")
 
+    #Sin rotaciones, solo X,Y,Z
     if rotacion.lower() == "no":
         offRArm  = [[] for x in range(3)]
         offRLeg  = [[] for x in range(3)]
@@ -86,6 +87,7 @@ def startAdjustData(nombreArchivo):
             offHead[1].append(round(float(listaOffsets[16][j]),4))
             offHead[2].append(round(float(listaOffsets[17][j]),4))
 
+    #Conrotaciones, X,Y,Z,wX,wY,wZ
     elif rotacion.lower() == "yes":
         offRArm  = [[] for x in range(6)]
         offRLeg  = [[] for x in range(6)]
@@ -161,7 +163,10 @@ def startAdjustData(nombreArchivo):
 
     #Creando objeto con contenido del archivo CSV
     ##Abriendo archivo
-    f = open(archivo, 'rt')
+    try:
+        f = open(archivo, 'rt')
+    except IOError:
+        error.abort("Archivo no encontrado, revise nombre de la rutina a ejecutar.", None, "CSVMOCAPFunc")
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(f)
     filasIniciales = [r for r in reader]
