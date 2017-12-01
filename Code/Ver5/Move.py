@@ -39,7 +39,7 @@ def StiffnessOn(proxy):
     pTimeLists = 1.0
     proxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 #-------------------------------------------------------------------------------
-def main(robotIP,coreo,marcoRef):
+def main(robotIP,coreo,marcoRef,offFile):
     #SetUp
     PORT = 9559 #Puerto por defecto
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -99,7 +99,7 @@ def main(robotIP,coreo,marcoRef):
     print "----------------------------------"
     print "    Starting adjustment of data..."
     #Realiza ajuste de los datos de la grabacion
-    csvMocap.startAdjustData(coreo)
+    csvMocap.startAdjustData(coreo,offFile)
 
     print "    Adjustment completed."
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -220,7 +220,7 @@ def main(robotIP,coreo,marcoRef):
                                                                             ],
                                                                 absolutos)
             #Obtiene posicion del COM general luego de posicionarse
-            COM = motionProxy.getCOM("Body",referencia,True)
+            COM = motionProxy.getCOM("Body",referencia, True)
             if COM[1] >
 
     #Utiliza 4 actuadores: RArm, LArm, Torso y Head
@@ -298,6 +298,7 @@ if __name__ == "__main__":
     #robotIp = "169.254.42.173" #Bato Local
     coreo = ""
     marcoRef = "ROBOT"
+    offFile = "offsets.csv"
 
     if len(sys.argv) == 4:
         robotIp  = sys.argv[1]
@@ -307,11 +308,26 @@ if __name__ == "__main__":
         print "Using robot IP:", robotIp
         print "Choreography file to read:", coreo
         print "Using reference plane:", marcoRef
+        print "Using calibration data from default:", offFile
+        print "------------------------------------"
+        print "Initializing Teleoperation with Data from a MoCap recording"
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        time.sleep(1.5) #Tiempo para que el usuario lea las indicaciones
+    elif len(sys.argv) == 5:
+        robotIp  = sys.argv[1]
+        coreo    = sys.argv[2]
+        marcoRef = sys.argv[3]
+        offFile  = sys.argv[4]
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        print "Using robot IP:", robotIp
+        print "Choreography file to read:", coreo
+        print "Using reference plane:", marcoRef
+        print "Using calibration data from file:", offFile
         print "------------------------------------"
         print "Initializing Teleoperation with Data from a MoCap recording"
         print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         time.sleep(1.5) #Tiempo para que el usuario lea las indicaciones
     else:
-        error.abort("Expected 3 arguments on call.", "Move")
+        error.abort("Expected 3 or 4 arguments on call.", "Move")
 
-    main(robotIp,coreo,marcoRef)
+    main(robotIp,coreo,marcoRef,offFile)

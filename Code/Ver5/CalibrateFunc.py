@@ -56,10 +56,10 @@ def setCalData(archNao, archP, wRot):
     ##Root (../Code)
     rootDir = dirname(dirname(abspath(__file__)))
     ##Archivos con posiciones del Nao
-    dirNao = os.path.join(rootDir, "Ver5/Cal/NAO/")
+    dirNao = os.path.join(rootDir, "Ver5/Calibration/NAO/")
     dirNao = os.path.join(dirNao, archNao)
     ##Archivos con posiciones de la PERSONA_ROBOT
-    dirPersona = os.path.join(rootDir, "Ver5/Cal/Human/")
+    dirPersona = os.path.join(rootDir, "Ver5/Calibration/Human/")
     dirPersona = os.path.join(dirPersona, archP)
 
     #Obteniendo contenidos
@@ -67,7 +67,7 @@ def setCalData(archNao, archP, wRot):
     try:
         fNao = open(dirNao, 'rt')
     except Exception,e:
-        error.abort("is not a valid directory", archNao, "Calibrate")
+        error.abort("is not a valid directory", dirNao, "CalibrateFunc")
 
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(fNao)
@@ -77,7 +77,7 @@ def setCalData(archNao, archP, wRot):
     try:
         fPersona = open(dirPersona, 'rt')
     except Exception,e:
-        error.abort("is not a valid directory", archP, "Calibrate")
+        error.abort("is not a valid directory", dirPersona, "CalibrateFunc")
     ##Obteniendo datos completos y cerrando archivo
     reader = csv.reader(fPersona)
     filasPersona = [r for r in reader]
@@ -102,16 +102,11 @@ def setCalData(archNao, archP, wRot):
         for i,item in enumerate(filasDatosNao):
             for contTrio in range(0,18): #3DoF*6Actuadores
                 if contXYZ < 2:
-                    try:
-                        trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
-                    except ValueError:
-                        print "Cell ignored"
+                    trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     contXYZ+=1
+
                 elif contXYZ == 2:
-                    try:
-                        trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
-                    except ValueError:
-                        print "Cell ignored"
+                    trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     contXYZ = 0
 
                     if (contAct == 0):
@@ -141,18 +136,10 @@ def setCalData(archNao, archP, wRot):
         for i,item in enumerate(filasDatosNao):
             for contTrio in range(0,36):#6Dof*6Actuadores
                 if contXYZ < 5:
-                    try:
-                        trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
-                    except ValueError:
-                        print "Cell ignored"
-
+                    trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     contXYZ+=1
                 elif contXYZ == 5:
-                    try:
-                        trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
-                    except ValueError:
-                        print "Cell ignored"
-
+                    trioXYZ[contXYZ] = float(filasDatosNao[i].pop(0))
                     contXYZ = 0
 
                     if (contAct == 0):
@@ -212,30 +199,33 @@ def setCalData(archNao, archP, wRot):
         for i,item in enumerate(filasDatosP):
             for contTrio in range(0,18):
                 if contXYZ < 2:
+                    temp = filasDatosP[i].pop(0)
                     try:
-                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                        trioXYZ[contXYZ] = float(temp)
                     except ValueError:
-                        print "Cell ignored"
+                        trioXYZ[contXYZ] = temp
                     contXYZ+=1
+
                 elif contXYZ == 2:
+                    temp = filasDatosP[i].pop(0)
                     try:
-                        trioXYZ[contXYZ] = float(filasDatosP[i].pop(0))
+                        trioXYZ[contXYZ] = float(temp)
                     except ValueError:
-                        print "Cell ignored"
+                        trioXYZ[contXYZ] = temp
                     contXYZ = 0
 
                     if listaActuadores[contAct] == "RArm":
-                        RArmPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                        RArmPCal.append( [trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "RLeg":
-                        RLegPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                        RLegPCal.append( [trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "LLeg":
-                        LLegPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                        LLegPCal.append( [trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "LArm":
-                        LArmPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                        LArmPCal.append( [trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "Torso":
-                        TorsoPCal.append([-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                        TorsoPCal.append([trioXYZ[0], trioXYZ[2], trioXYZ[1]])
                     elif listaActuadores[contAct] == "Head":
-                        HeadPCal.append( [-1*trioXYZ[0], trioXYZ[2], trioXYZ[1]])
+                        HeadPCal.append( [trioXYZ[0], trioXYZ[2], trioXYZ[1]])
 
                     if (contAct == 5):
                         contAct = 0
@@ -261,6 +251,7 @@ def setCalData(archNao, archP, wRot):
                         ##'Empty' de manera manual en el CSV a leer
                         trioXYZ[contXYZ] = temp
                     contXYZ+=1
+
                 elif contXYZ == 7:
                     temp = filasDatosP[i].pop(0)
                     try:
@@ -268,6 +259,7 @@ def setCalData(archNao, archP, wRot):
                     except ValueError:
                         trioXYZ[contXYZ] = temp
                     contXYZ = 0
+
                     #Y y Z estan intercambiadas, al igual que wY y wZ
                     #Solo se ocupan X,Y,Z,wX,wY,wZ
                     if listaActuadores[contAct] == "RArm":

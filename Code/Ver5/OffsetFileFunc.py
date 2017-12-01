@@ -8,7 +8,7 @@
 #Con N = grado + 1
 ##
 #El archivo CSV con los offsets se sobreescribe cada vez que se hace una
-#calibracion. Se guarda en el directorio .../Cal/Offsets, bajo el nombre
+#calibracion. Se guarda en el directorio .../Calibration/Offsets, bajo el nombre
 #no alterable "offsets.csv".
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -26,11 +26,11 @@ import ErrorFunc as error
 #-------------------------------------------------------------------------------
 #Lee archivo con los offsets y devuelve lista con el conjunto de terminos para
 #cada actuador y el grado polinomial utilizado en la calibracion
-def getOffsets():
-    print "Reading offsets values from default .../Cal/Offsets/offsets.csv"
+def getOffsets(offsetsFile):
+    print "Reading offsets values from default .../Calibration/Offsets/offsets.csv"
     #Root
     archivo = dirname(dirname(abspath(__file__)))
-    archivo += "/Ver5/Cal/Offsets/offsets.csv"
+    archivo += "/Ver5/Calibration/Offsets/"+offsetsFile
     ##Abriendo archivo
     f = open(archivo, 'rt')
     ##Obteniendo datos completos y cerrando archivo
@@ -55,9 +55,9 @@ def getOffsets():
 #Recibe grado polinomial usado y lista con grupos de terminos por eje_actuador,
 #segun el orden preferente (XYZ para ejes, RArm, RLeg,#LLeg, LArm, Torso, Head
 #para actuadores; la lista debe contener 18 elementos)
-def writeOffsets(degree, eje_actuador, rotacion):
+def writeOffsets(degree, eje_actuador, rotacion, ID):
     archivo = dirname(dirname(abspath(__file__)))
-    archivo += "/Ver5/Cal/Offsets/offsets.csv"
+    archivo += "/Ver5/Calibration/Offsets/offsets_"+ID+".csv"
     with open(archivo, 'w') as csvfile:
         writer = csv.writer(csvfile)
         #Encabezado (solo importa el grado ya que el orden de los terminos se

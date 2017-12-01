@@ -32,14 +32,14 @@ listaTiemposCompletos = list()
 
 #Inicia el procesamiento de los archivos CSV necesarios para el ajuste de datos
 #Recibe como parametro el nombre del archivo CSV con las coordenadas a leer
-def startAdjustData(nombreArchivo):
+def startAdjustData(nombreArchivo, offFile):
     print "++++++++++++++++++++++++++++++++++++++++++++++++++++"
     print "Starting coordinates adjustment for", nombreArchivo
     #Coeficientes de Ajuste para valores del MoCap, considerando relacion lineal
     #entre datos del MoCap y datos del Nao
     ##Lectura del archivo con los parametros
     try:
-        listaOffsets,degree,rotacion = offset.getOffsets()
+        listaOffsets,degree,rotacion = offset.getOffsets(offFile)
     except Exception,e:
         error.abort("Failed to get offsets from file offset.csv, check file", None, "CSVMOCAPFunc")
 

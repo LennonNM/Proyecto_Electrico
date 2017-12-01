@@ -18,7 +18,7 @@ def abort(explanation, value=None, program=None, called=None):
         if called is not None:
             print "        Called from:", called
         if program is not None:
-            print "    A borting program:", program
+            print "    Aborting from file:", program
         else:
             print "    Aborting process"
     else:
@@ -26,7 +26,7 @@ def abort(explanation, value=None, program=None, called=None):
         if called is not None:
             print "        Called from:", called
         if program is not None:
-            print "    Aborting program:", program
+            print "    Aborting from file:", program
         else:
             print "    Aborting process"
     print "---------------------------------------------------"
