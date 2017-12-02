@@ -88,7 +88,7 @@ def main(robotIP,coreo,marcoRef,offFile):
     #### AXIS_MASK_VEL controla solo XYZ
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
     if marcoRef.upper() == "ARRIBA":
-        axisMask = [ motion.AXIS_MASK_VEL ]*3
+        axisMask = [ motion.AXIS_MASK_VEL ]*2
     elif marcoRef.upper() == "ROBOT":
         axisMask = [ motion.AXIS_MASK_VEL ]*4
     elif marcoRef.upper() == "TORSO":
@@ -120,11 +120,11 @@ def main(robotIP,coreo,marcoRef,offFile):
     ##Lista de Actuadores en el orden a ser usadas
     ###Orden Preferido "RArm", "RLeg", "LLeg", "LArm", "Torso", "Head"
     if marcoRef.upper() == "ROBOT":
-        listaActuadores = ["RArm", "LArm", "Torso", "Head"]
+        listaActuadores = ["RArm", "LArm", "Head"]
     elif marcoRef.upper() == "TORSO":
         listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Head"]
     elif marcoRef.upper() == "ARRIBA":
-        listaActuadores = ["RArm", "LArm", "Torso"]
+        listaActuadores = ["RArm", "LArm"]
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -210,18 +210,17 @@ def main(robotIP,coreo,marcoRef,offFile):
         for i in range(0,len(listaCoordenadas[0]),fps):
             motionProxy.positionInterpolations(listaActuadores, referencia, [
                                                                              listaCoordenadas[0][i:i+fps-1],
-                                                                             listaCoordenadas[1][i:i+fps-1],
-                                                                             listaCoordenadas[2][i:i+fps-1]
+                                                                             listaCoordenadas[1][i:i+fps-1]
                                                                             ],
                                                                 axisMask,   [
                                                                              listaTiempos[0][0:len(listaCoordenadas[0][i:i+fps-1])],
-                                                                             listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])],
-                                                                             listaTiempos[2][0:len(listaCoordenadas[2][i:i+fps-1])]
+                                                                             listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])]
                                                                             ],
                                                                 absolutos)
             #Obtiene posicion del COM general luego de posicionarse
             COM = motionProxy.getCOM("Body",referencia, True)
-            if COM[1] >
+            print COM
+            #if COM[1] >
 
     #Utiliza 4 actuadores: RArm, LArm, Torso y Head
     elif marcoRef.upper() == "ROBOT":
@@ -270,6 +269,11 @@ def main(robotIP,coreo,marcoRef,offFile):
     ##agregar estabilidad
     time.sleep(2.0)
 
+    print "    NAO moving to posture: Crouch"
+    print "------------------------------------------------"
+    ##Posicion de reposo seguras para finalizar la accion
+    postureProxy.goToPosture("Crouch", 0.5)
+
     #Se habilita nuevamente el controlador automatico de caidas
     ##****IMPORTANTE REALIZAR ESTE PASO****##
     motionProxy.setFallManagerEnabled(True)
@@ -279,10 +283,6 @@ def main(robotIP,coreo,marcoRef,offFile):
     print "Fall Manager Enabled"
     print "**********************"
 
-    print "    NAO moving to posture: Crouch"
-    print "------------------------------------------------"
-    ##Posicion de reposo seguras para finalizar la accion
-    postureProxy.goToPosture("Crouch", 0.5)
     motionProxy.rest() # Apaga los motores del Nao
     ## **Si no se apagan es posible que se sobrecalienten aun estando en reposo**
     print "    NAO is resting."

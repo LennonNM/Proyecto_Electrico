@@ -87,7 +87,7 @@ def startAdjustData(nombreArchivo, offFile):
             offHead[1].append(round(float(listaOffsets[16][j]),4))
             offHead[2].append(round(float(listaOffsets[17][j]),4))
 
-    #Conrotaciones, X,Y,Z,wX,wY,wZ
+    #Con rotaciones, X,Y,Z,wX,wY,wZ
     elif rotacion.lower() == "yes":
         offRArm  = [[] for x in range(6)]
         offRLeg  = [[] for x in range(6)]
@@ -95,7 +95,6 @@ def startAdjustData(nombreArchivo, offFile):
         offLArm  = [[] for x in range(6)]
         offTorso = [[] for x in range(6)]
         offHead  = [[] for x in range(6)]
-
 
         #RArm
         for j in range(degree+1):
@@ -246,36 +245,71 @@ def startAdjustData(nombreArchivo, offFile):
                         ####Sin importar el orden de los actuadores en el archivo aqui
                         ####se acomodan en el orden preferente y se aplica la correccion
                         ####con los offsets
-                        if listaActuadores[contActuador] == "RArm":
-                            actuador[0].append([round((coordenadas[0]**2)*offRArm[0][0] +(-1)*coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                                round((coordenadas[2]**2)*offRArm[1][0] +     coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                                round((coordenadas[1]**2)*offRArm[2][0] +     coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                                0.0, 0.0, 0.0]) #Se pone rotaciones en 0 ya que no se van a utilizar
-                        elif listaActuadores[contActuador] == "RLeg":
-                            actuador[1].append([round((coordenadas[0]**2)*offRArm[0][0] +(-1)*coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                                round((coordenadas[2]**2)*offRArm[1][0] +     coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                                round((coordenadas[1]**2)*offRArm[2][0] +     coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                                0.0, 0.0, 0.0])
-                        elif listaActuadores[contActuador] == "LLeg":
-                            actuador[2].append([round((coordenadas[0]**2)*offRArm[0][0] +(-1)*coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                                round((coordenadas[2]**2)*offRArm[1][0] +     coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                                round((coordenadas[1]**2)*offRArm[2][0] +     coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                                0.0, 0.0, 0.0])
-                        elif listaActuadores[contActuador] == "LArm":
-                            actuador[3].append([round((coordenadas[0]**2)*offRArm[0][0] +(-1)*coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                                round((coordenadas[2]**2)*offRArm[1][0] +     coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                                round((coordenadas[1]**2)*offRArm[2][0] +     coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                                0.0, 0.0, 0.0])
-                        elif listaActuadores[contActuador] == "Torso":
-                            actuador[4].append([round((coordenadas[0]**2)*offRArm[0][0] +(-1)*coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                                round((coordenadas[2]**2)*offRArm[1][0] +     coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                                round((coordenadas[1]**2)*offRArm[2][0] +     coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                                0.0, 0.0, 0.0])
-                        elif listaActuadores[contActuador] == "Head":
-                            actuador[5].append([round((coordenadas[0]**2)*offRArm[0][0] +(-1)*coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
-                                                round((coordenadas[2]**2)*offRArm[1][0] +     coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
-                                                round((coordenadas[1]**2)*offRArm[2][0] +     coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
-                                                0.0, 0.0, 0.0])
+
+                        #Polinomio grado 1
+                        if deegree == 1:
+                            if listaActuadores[contActuador] == "RArm":
+                                actuador[0].append([round(coordenadas[0]*offRArm[0][0] + offRArm[0][1], 2),
+                                                    round(coordenadas[2]*offRArm[1][0] + offRArm[1][1], 2),
+                                                    round(coordenadas[1]*offRArm[2][0] + offRArm[2][1], 2),
+                                                    0.0, 0.0, 0.0]) #Se pone rotaciones en 0 ya que no se van a utilizar
+                            elif listaActuadores[contActuador] == "RLeg":
+                                actuador[1].append([round(coordenadas[0]*offRArm[0][0] + offRArm[0][1], 2),
+                                                    round(coordenadas[2]*offRArm[1][0] + offRArm[1][1], 2),
+                                                    round(coordenadas[1]*offRArm[2][0] + offRArm[2][1], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "LLeg":
+                                actuador[2].append([round(coordenadas[0]*offRArm[0][0] + offRArm[0][1], 2),
+                                                    round(coordenadas[2]*offRArm[1][0] + offRArm[1][1], 2),
+                                                    round(coordenadas[1]*offRArm[2][0] + offRArm[2][1], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "LArm":
+                                actuador[3].append([round(coordenadas[0]*offRArm[0][0] + offRArm[0][1], 2),
+                                                    round(coordenadas[2]*offRArm[1][0] + offRArm[1][1], 2),
+                                                    round(coordenadas[1]*offRArm[2][0] + offRArm[2][1], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "Torso":
+                                actuador[4].append([round(coordenadas[0]*offRArm[0][0] + offRArm[0][1], 2),
+                                                    round(coordenadas[2]*offRArm[1][0] + offRArm[1][1], 2),
+                                                    round(coordenadas[1]*offRArm[2][0] + offRArm[2][1], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "Head":
+                                actuador[5].append([round(coordenadas[0]*offRArm[0][0] + offRArm[0][1], 2),
+                                                    round(coordenadas[2]*offRArm[1][0] + offRArm[1][1], 2),
+                                                    round(coordenadas[1]*offRArm[2][0] + offRArm[2][1], 2),
+                                                    0.0, 0.0, 0.0])
+                        #Polinomio grado 2
+                        elif deegree == 2:
+                            if listaActuadores[contActuador] == "RArm":
+                                actuador[0].append([round((coordenadas[0]**2)*offRArm[0][0] + coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                                    round((coordenadas[2]**2)*offRArm[1][0] + coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                                    round((coordenadas[1]**2)*offRArm[2][0] + coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                                    0.0, 0.0, 0.0]) #Se pone rotaciones en 0 ya que no se van a utilizar
+                            elif listaActuadores[contActuador] == "RLeg":
+                                actuador[1].append([round((coordenadas[0]**2)*offRArm[0][0] + coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                                    round((coordenadas[2]**2)*offRArm[1][0] + coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                                    round((coordenadas[1]**2)*offRArm[2][0] + coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "LLeg":
+                                actuador[2].append([round((coordenadas[0]**2)*offRArm[0][0] + coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                                    round((coordenadas[2]**2)*offRArm[1][0] + coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                                    round((coordenadas[1]**2)*offRArm[2][0] + coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "LArm":
+                                actuador[3].append([round((coordenadas[0]**2)*offRArm[0][0] + coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                                    round((coordenadas[2]**2)*offRArm[1][0] + coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                                    round((coordenadas[1]**2)*offRArm[2][0] + coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "Torso":
+                                actuador[4].append([round((coordenadas[0]**2)*offRArm[0][0] + coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                                    round((coordenadas[2]**2)*offRArm[1][0] + coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                                    round((coordenadas[1]**2)*offRArm[2][0] + coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                                    0.0, 0.0, 0.0])
+                            elif listaActuadores[contActuador] == "Head":
+                                actuador[5].append([round((coordenadas[0]**2)*offRArm[0][0] + coordenadas[0]*offRArm[0][1]+offRArm[0][2], 2),
+                                                    round((coordenadas[2]**2)*offRArm[1][0] + coordenadas[2]*offRArm[1][1]+offRArm[1][2], 2),
+                                                    round((coordenadas[1]**2)*offRArm[2][0] + coordenadas[1]*offRArm[2][1]+offRArm[2][2], 2),
+                                                    0.0, 0.0, 0.0])
                         contActuador+=1
                         if contActuador == 6:
                             contActuador = 0
@@ -297,54 +331,107 @@ def startAdjustData(nombreArchivo, offFile):
                     contXYZ=0
                     #Orden datos en CSV (wX,wY,wZ,W,X,Y',Z',Error), con Y' y Z' cambiados
                     #Orden necesario de los datos (X,Z',Y',wX,wY,wZ), con Y'=Z y Z'=Y
-                    if listaActuadores[contActuador] == "RArm":
-                        actuador[0].append([round((coordenadas[4]**2)*offRArm[0][0] +  coordenadas[4]* offRArm[0][1] +  offRArm[0][2], 2),
-                                            round((coordenadas[6]**2)*offRArm[1][0] +  coordenadas[6]* offRArm[1][1] +  offRArm[1][2], 2),
-                                            round((coordenadas[5]**2)*offRArm[2][0] +  coordenadas[5]* offRArm[2][1] +  offRArm[2][2], 2),
-                                            round((coordenadas[0]**2)*offRArm[3][0] +  coordenadas[0]* offRArm[3][1] +  offRArm[3][2], 2),
-                                            round((coordenadas[1]**2)*offRArm[4][0] +  coordenadas[1]* offRArm[4][1] +  offRArm[4][2], 2),
-                                            round((coordenadas[2]**2)*offRArm[5][0] +  coordenadas[2]* offRArm[5][1] +  offRArm[5][2], 2),
-                                           ])
-                    elif listaActuadores[contActuador] == "RLeg":
-                        actuador[1].append([round((coordenadas[4]**2)*offRLeg[0][0] +  coordenadas[4]* offRLeg[0][1] +  offRLeg[0][2], 2),
-                                            round((coordenadas[6]**2)*offRLeg[1][0] +  coordenadas[6]* offRLeg[1][1] +  offRLeg[1][2], 2),
-                                            round((coordenadas[5]**2)*offRLeg[2][0] +  coordenadas[5]* offRLeg[2][1] +  offRLeg[2][2], 2),
-                                            round((coordenadas[0]**2)*offRLeg[3][0] +  coordenadas[0]* offRLeg[3][1] +  offRLeg[3][2], 2),
-                                            round((coordenadas[1]**2)*offRLeg[4][0] +  coordenadas[1]* offRLeg[4][1] +  offRLeg[4][2], 2),
-                                            round((coordenadas[2]**2)*offRLeg[5][0] +  coordenadas[2]* offRLeg[5][1] +  offRLeg[5][2], 2),
-                                           ])
-                    elif listaActuadores[contActuador] == "LLeg":
-                        actuador[2].append([round((coordenadas[4]**2)*offLLeg[0][0] +  coordenadas[4]* offLLeg[0][1] +  offLLeg[0][2], 2),
-                                            round((coordenadas[6]**2)*offLLeg[1][0] +  coordenadas[6]* offLLeg[1][1] +  offLLeg[1][2], 2),
-                                            round((coordenadas[5]**2)*offLLeg[2][0] +  coordenadas[5]* offLLeg[2][1] +  offLLeg[2][2], 2),
-                                            round((coordenadas[0]**2)*offLLeg[3][0] +  coordenadas[0]* offLLeg[3][1] +  offLLeg[3][2], 2),
-                                            round((coordenadas[1]**2)*offLLeg[4][0] +  coordenadas[1]* offLLeg[4][1] +  offLLeg[4][2], 2),
-                                            round((coordenadas[2]**2)*offLLeg[5][0] +  coordenadas[2]* offLLeg[5][1] +  offLLeg[5][2], 2),
-                                           ])
-                    elif listaActuadores[contActuador] == "LArm":
-                        actuador[3].append([round((coordenadas[4]**2)*offLArm[0][0] +  coordenadas[4]* offLArm[0][1] +  offLArm[0][2], 2),
-                                            round((coordenadas[6]**2)*offLArm[1][0] +  coordenadas[6]* offLArm[1][1] +  offLArm[1][2], 2),
-                                            round((coordenadas[5]**2)*offLArm[2][0] +  coordenadas[5]* offLArm[2][1] +  offLArm[2][2], 2),
-                                            round((coordenadas[0]**2)*offLArm[3][0] +  coordenadas[0]* offLArm[3][1] +  offLArm[3][2], 2),
-                                            round((coordenadas[1]**2)*offLArm[4][0] +  coordenadas[1]* offLArm[4][1] +  offLArm[4][2], 2),
-                                            round((coordenadas[2]**2)*offLArm[5][0] +  coordenadas[2]* offLArm[5][1] +  offLArm[5][2], 2),
-                                           ])
-                    elif listaActuadores[contActuador] == "Torso":
-                        actuador[4].append([round((coordenadas[4]**2)*offTorso[0][0] + coordenadas[4]*offTorso[0][1] + offTorso[0][2], 2),
-                                            round((coordenadas[6]**2)*offTorso[1][0] + coordenadas[6]*offTorso[1][1] + offTorso[1][2], 2),
-                                            round((coordenadas[5]**2)*offTorso[2][0] + coordenadas[5]*offTorso[2][1] + offTorso[2][2], 2),
-                                            round((coordenadas[0]**2)*offTorso[3][0] + coordenadas[0]*offTorso[3][1] + offTorso[3][2], 2),
-                                            round((coordenadas[1]**2)*offTorso[4][0] + coordenadas[1]*offTorso[4][1] + offTorso[4][2], 2),
-                                            round((coordenadas[2]**2)*offTorso[5][0] + coordenadas[2]*offTorso[5][1] + offTorso[5][2], 2),
-                                           ])
-                    elif listaActuadores[contActuador] == "Head":
-                        actuador[5].append([round((coordenadas[4]**2)*offHead[0][0] +  coordenadas[4]* offHead[0][1] +  offHead[0][2], 2),
-                                            round((coordenadas[6]**2)*offHead[1][0] +  coordenadas[6]* offHead[1][1] +  offHead[1][2], 2),
-                                            round((coordenadas[5]**2)*offHead[2][0] +  coordenadas[5]* offHead[2][1] +  offHead[2][2], 2),
-                                            round((coordenadas[0]**2)*offHead[3][0] +  coordenadas[0]* offHead[3][1] +  offHead[3][2], 2),
-                                            round((coordenadas[1]**2)*offHead[4][0] +  coordenadas[1]* offHead[4][1] +  offHead[4][2], 2),
-                                            round((coordenadas[2]**2)*offHead[5][0] +  coordenadas[2]* offHead[5][1] +  offHead[5][2], 2),
-                                           ])
+
+                    #Polinomio grado 1
+                    if degree == 1:
+                        if listaActuadores[contActuador] == "RArm":
+                            actuador[0].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                                                round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
+                                                round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
+                                                round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
+                                                round(coordenadas[1]* offRArm[4][0] +  offRArm[4][1], 2),
+                                                round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "RLeg":
+                            actuador[1].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                                                round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
+                                                round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
+                                                round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
+                                                round(coordenadas[1]* offRArm[4][0] +  offRArm[4][1], 2),
+                                                round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "LLeg":
+                            actuador[2].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                                                round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
+                                                round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
+                                                round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
+                                                round(coordenadas[1]* offRArm[4][0] +  offRArm[4][1], 2),
+                                                round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "LArm":
+                            actuador[3].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                                                round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
+                                                round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
+                                                round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
+                                                round(coordenadas[1]* offRArm[4][0] +  offRArm[4][1], 2),
+                                                round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "Torso":
+                            actuador[4].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                                                round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
+                                                round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
+                                                round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
+                                                round(coordenadas[1]* offRArm[4][0] +  offRArm[4][1], 2),
+                                                round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "Head":
+                            actuador[5].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                                                round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
+                                                round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
+                                                round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
+                                                round(coordenadas[1]* offRArm[4][0] +  offRArm[4][1], 2),
+                                                round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
+                                               ])
+                    #Polinomio grado 2
+                    elif degree == 2:
+                        if listaActuadores[contActuador] == "RArm":
+                            actuador[0].append([round((coordenadas[4]**2)*offRArm[0][0] +  coordenadas[4]* offRArm[0][1] +  offRArm[0][2], 2),
+                                                round((coordenadas[6]**2)*offRArm[1][0] +  coordenadas[6]* offRArm[1][1] +  offRArm[1][2], 2),
+                                                round((coordenadas[5]**2)*offRArm[2][0] +  coordenadas[5]* offRArm[2][1] +  offRArm[2][2], 2),
+                                                round((coordenadas[0]**2)*offRArm[3][0] +  coordenadas[0]* offRArm[3][1] +  offRArm[3][2], 2),
+                                                round((coordenadas[1]**2)*offRArm[4][0] +  coordenadas[1]* offRArm[4][1] +  offRArm[4][2], 2),
+                                                round((coordenadas[2]**2)*offRArm[5][0] +  coordenadas[2]* offRArm[5][1] +  offRArm[5][2], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "RLeg":
+                            actuador[1].append([round((coordenadas[4]**2)*offRLeg[0][0] +  coordenadas[4]* offRLeg[0][1] +  offRLeg[0][2], 2),
+                                                round((coordenadas[6]**2)*offRLeg[1][0] +  coordenadas[6]* offRLeg[1][1] +  offRLeg[1][2], 2),
+                                                round((coordenadas[5]**2)*offRLeg[2][0] +  coordenadas[5]* offRLeg[2][1] +  offRLeg[2][2], 2),
+                                                round((coordenadas[0]**2)*offRLeg[3][0] +  coordenadas[0]* offRLeg[3][1] +  offRLeg[3][2], 2),
+                                                round((coordenadas[1]**2)*offRLeg[4][0] +  coordenadas[1]* offRLeg[4][1] +  offRLeg[4][2], 2),
+                                                round((coordenadas[2]**2)*offRLeg[5][0] +  coordenadas[2]* offRLeg[5][1] +  offRLeg[5][2], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "LLeg":
+                            actuador[2].append([round((coordenadas[4]**2)*offLLeg[0][0] +  coordenadas[4]* offLLeg[0][1] +  offLLeg[0][2], 2),
+                                                round((coordenadas[6]**2)*offLLeg[1][0] +  coordenadas[6]* offLLeg[1][1] +  offLLeg[1][2], 2),
+                                                round((coordenadas[5]**2)*offLLeg[2][0] +  coordenadas[5]* offLLeg[2][1] +  offLLeg[2][2], 2),
+                                                round((coordenadas[0]**2)*offLLeg[3][0] +  coordenadas[0]* offLLeg[3][1] +  offLLeg[3][2], 2),
+                                                round((coordenadas[1]**2)*offLLeg[4][0] +  coordenadas[1]* offLLeg[4][1] +  offLLeg[4][2], 2),
+                                                round((coordenadas[2]**2)*offLLeg[5][0] +  coordenadas[2]* offLLeg[5][1] +  offLLeg[5][2], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "LArm":
+                            actuador[3].append([round((coordenadas[4]**2)*offLArm[0][0] +  coordenadas[4]* offLArm[0][1] +  offLArm[0][2], 2),
+                                                round((coordenadas[6]**2)*offLArm[1][0] +  coordenadas[6]* offLArm[1][1] +  offLArm[1][2], 2),
+                                                round((coordenadas[5]**2)*offLArm[2][0] +  coordenadas[5]* offLArm[2][1] +  offLArm[2][2], 2),
+                                                round((coordenadas[0]**2)*offLArm[3][0] +  coordenadas[0]* offLArm[3][1] +  offLArm[3][2], 2),
+                                                round((coordenadas[1]**2)*offLArm[4][0] +  coordenadas[1]* offLArm[4][1] +  offLArm[4][2], 2),
+                                                round((coordenadas[2]**2)*offLArm[5][0] +  coordenadas[2]* offLArm[5][1] +  offLArm[5][2], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "Torso":
+                            actuador[4].append([round((coordenadas[4]**2)*offTorso[0][0] + coordenadas[4]*offTorso[0][1] + offTorso[0][2], 2),
+                                                round((coordenadas[6]**2)*offTorso[1][0] + coordenadas[6]*offTorso[1][1] + offTorso[1][2], 2),
+                                                round((coordenadas[5]**2)*offTorso[2][0] + coordenadas[5]*offTorso[2][1] + offTorso[2][2], 2),
+                                                round((coordenadas[0]**2)*offTorso[3][0] + coordenadas[0]*offTorso[3][1] + offTorso[3][2], 2),
+                                                round((coordenadas[1]**2)*offTorso[4][0] + coordenadas[1]*offTorso[4][1] + offTorso[4][2], 2),
+                                                round((coordenadas[2]**2)*offTorso[5][0] + coordenadas[2]*offTorso[5][1] + offTorso[5][2], 2),
+                                               ])
+                        elif listaActuadores[contActuador] == "Head":
+                            actuador[5].append([round((coordenadas[4]**2)*offHead[0][0] +  coordenadas[4]* offHead[0][1] +  offHead[0][2], 2),
+                                                round((coordenadas[6]**2)*offHead[1][0] +  coordenadas[6]* offHead[1][1] +  offHead[1][2], 2),
+                                                round((coordenadas[5]**2)*offHead[2][0] +  coordenadas[5]* offHead[2][1] +  offHead[2][2], 2),
+                                                round((coordenadas[0]**2)*offHead[3][0] +  coordenadas[0]* offHead[3][1] +  offHead[3][2], 2),
+                                                round((coordenadas[1]**2)*offHead[4][0] +  coordenadas[1]* offHead[4][1] +  offHead[4][2], 2),
+                                                round((coordenadas[2]**2)*offHead[5][0] +  coordenadas[2]* offHead[5][1] +  offHead[5][2], 2),
+                                               ])
                     contActuador+=1
                     if contActuador == 6:
                         contActuador = 0
@@ -358,36 +445,36 @@ def startAdjustData(nombreArchivo, offFile):
     global coordenadasCompletas
     coordenadasCompletas = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
     global coordenadasArriba
-    coordenadasArriba = [actuador[0], actuador[3], actuador[4]]
+    coordenadasArriba = [actuador[0], actuador[3]]
     global coordenadasROBOT
-    coordenadasROBOT = [actuador[0], actuador[3], actuador[4], actuador[5]]
+    coordenadasROBOT = [actuador[0], actuador[3], actuador[5]]
 
     ##Si los datos obtenidos vienen con referencia al TORSO no es necesario este
     ##proceso de cambio de referencia
     listaDeActuadores = deepcopy(coordenadasCompletas)
     ## RArm
     for i, item in enumerate(listaDeActuadores[0]):
-        for j, item2 in enumerate(listaDeActuadores[0][j]):
+        for j, item2 in enumerate(listaDeActuadores[0][i]):
             listaDeActuadores[0][i][j] = round((listaDeActuadores[0][i][j] - listaDeActuadores[4][i][j]), 2)
     ## RLeg
     for i, item in enumerate(listaDeActuadores[1]):
-        for j, item2 in enumerate(listaDeActuadores[1][j]):
+        for j, item2 in enumerate(listaDeActuadores[1][i]):
             listaDeActuadores[1][i][j] = round((listaDeActuadores[1][i][j] - listaDeActuadores[4][i][j]), 2)
     ## LLeg
     for i, item in enumerate(listaDeActuadores[2]):
-        for j, item2 in enumerate(listaDeActuadores[2][j]):
+        for j, item2 in enumerate(listaDeActuadores[2][i]):
             listaDeActuadores[2][i][j] = round((listaDeActuadores[2][i][j] - listaDeActuadores[4][i][j]), 2)
     ## LArm
     for i, item in enumerate(listaDeActuadores[3]):
-        for j, item2 in enumerate(listaDeActuadores[3][j]):
+        for j, item2 in enumerate(listaDeActuadores[3][i]):
             listaDeActuadores[3][i][j] = round((listaDeActuadores[3][i][j] - listaDeActuadores[4][i][j]), 2)
     ## Head
     for i, item in enumerate(listaDeActuadores[5]):
-        for j, item2 in enumerate(listaDeActuadores[5][j]):
+        for j, item2 in enumerate(listaDeActuadores[5][i]):
             listaDeActuadores[5][i][j] = round((listaDeActuadores[5][i][j] - listaDeActuadores[5][i][j]), 2)
     ## TORSO
     for i, item in enumerate(listaDeActuadores[4]):
-        for j, item2 in enumerate(listaDeActuadores[4][j]):
+        for j, item2 in enumerate(listaDeActuadores[4][i]):
             listaDeActuadores[4][i][j] = round((listaDeActuadores[4][i][j] - listaDeActuadores[4][i][j]), 2)
     #Genera vector con datos respecto al TORSO
     global coordenadasTORSO
