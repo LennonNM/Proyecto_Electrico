@@ -367,7 +367,14 @@ def startAdjustData(nombreArchivo, offFile):
                                                 round(coordenadas[2]* offRArm[5][0] +  offRArm[5][1], 2),
                                                ])
                         elif listaActuadores[contActuador] == "Torso":
-                            actuador[4].append([round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2),
+                            #Torso desbalance mucho, se debe restringir valores en X
+                            torsoX = round(coordenadas[4]* offRArm[0][0] +  offRArm[0][1], 2)
+                            if torsoX > 0.01:
+                                torsoX = 0.01
+                            elif torsoX < -0.01:
+                                torsoX = -0.01
+
+                            actuador[4].append([torsoX,
                                                 round(coordenadas[6]* offRArm[1][0] +  offRArm[1][1], 2),
                                                 round(coordenadas[5]* offRArm[2][0] +  offRArm[2][1], 2),
                                                 round(coordenadas[0]* offRArm[3][0] +  offRArm[3][1], 2),
@@ -445,7 +452,7 @@ def startAdjustData(nombreArchivo, offFile):
     global coordenadasCompletas
     coordenadasCompletas = [actuador[0], actuador[1], actuador[2], actuador[3], actuador[4], actuador[5]]
     global coordenadasArriba
-    coordenadasArriba = [actuador[0], actuador[3]]
+    coordenadasArriba = [actuador[0], actuador[3], actuador[4]]
     global coordenadasROBOT
     coordenadasROBOT = [actuador[0], actuador[3], actuador[5]]
 

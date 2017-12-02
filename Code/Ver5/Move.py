@@ -21,7 +21,7 @@
 #Imports
 import sys
 import time
-import numpy
+import numpy as np
 from naoqi import ALProxy
 import motion
 
@@ -88,7 +88,7 @@ def main(robotIP,coreo,marcoRef,offFile):
     #### AXIS_MASK_VEL controla solo XYZ
     #axisMask = [ motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL, motion.AXIS_MASK_ALL ]
     if marcoRef.upper() == "ARRIBA":
-        axisMask = [ motion.AXIS_MASK_VEL ]*2
+        axisMask = [ motion.AXIS_MASK_VEL ]*3
     elif marcoRef.upper() == "ROBOT":
         axisMask = [ motion.AXIS_MASK_VEL ]*4
     elif marcoRef.upper() == "TORSO":
@@ -124,7 +124,8 @@ def main(robotIP,coreo,marcoRef,offFile):
     elif marcoRef.upper() == "TORSO":
         listaActuadores = ["RArm", "RLeg", "LLeg", "LArm", "Head"]
     elif marcoRef.upper() == "ARRIBA":
-        listaActuadores = ["RArm", "LArm"]
+        listaActuadores = ["RArm", "LArm", "Torso"]
+        #listaActuadores = ["RArm", "LArm"]
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -192,7 +193,7 @@ def main(robotIP,coreo,marcoRef,offFile):
     #---------------------------------------------------------------------------
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
     print "++++++++++++++++++++++++++++++++++++++++++++++++"
-    print "NAO movement starting..."
+    print "NAO movement started..."
     #Inicio del movimiento
 
     ##Tiempo de espera para iniciar movimiento
@@ -202,25 +203,45 @@ def main(robotIP,coreo,marcoRef,offFile):
     ##Ejecucion de las posiciones obtenidas del archivo csvMocap, por cuadros (30 FPS)
     fps = 30
     COM = [0.0,0.0,0.0]
+    listaTorsoX = list()
+    listaTorsoY = list()
 
     #motion.wbEnableEffectorOptimization(effectorName, isActive);
 
     #Utiliza 3 actuadores: RArm, LArm y Torso
     if marcoRef.upper() == "ARRIBA":
         for i in range(0,len(listaCoordenadas[0]),fps):
+            #Calcula promedio de la posicion del torso deseada
+            for item in listaCoordenadas[2][i:i+fps-1]:
+                listaTorsoX.append(item[0])
+                listaTorsoY.append(item[1])
+            promTorsoX = np.mean(listaTorsoX)
+            promTorsoY = np.mean(listaTorsoY)
+
+            #Obtiene posicion del COM general
+            COM = motionProxy.getCOM("Body",referencia, True)
+            #Para apoyarse sobre alguna pierna se analiza donde se va a posicionar al
+            #torso sobre el eje Y (izq y der)
+            if promTorsoY < -0.025:
+                motionProxy.wbGoToBalance(soporteDer, 0.25)
+            elif promTorsoY > 0.025:
+                motionProxy.wbGoToBalance(soporteDer, 0.25)
+            else:
+                motionProxy.wbGoToBalance(soportePiernas, 0.25)
+
+            #Luego de evaluar el mejor apoyo para el posicionamiento deseado se
+            #realiza el movimiento del resto de los actuadores
             motionProxy.positionInterpolations(listaActuadores, referencia, [
                                                                              listaCoordenadas[0][i:i+fps-1],
-                                                                             listaCoordenadas[1][i:i+fps-1]
+                                                                             listaCoordenadas[1][i:i+fps-1],
+                                                                             listaCoordenadas[2][i:i+fps-1]
                                                                             ],
                                                                 axisMask,   [
                                                                              listaTiempos[0][0:len(listaCoordenadas[0][i:i+fps-1])],
-                                                                             listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])]
+                                                                             listaTiempos[1][0:len(listaCoordenadas[1][i:i+fps-1])],
+                                                                             listaTiempos[2][0:len(listaCoordenadas[1][i:i+fps-1])]
                                                                             ],
                                                                 absolutos)
-            #Obtiene posicion del COM general luego de posicionarse
-            COM = motionProxy.getCOM("Body",referencia, True)
-            print COM
-            #if COM[1] >
 
     #Utiliza 4 actuadores: RArm, LArm, Torso y Head
     elif marcoRef.upper() == "ROBOT":
