@@ -13,7 +13,7 @@ from os.path import dirname, abspath
 from copy import deepcopy
 
 #Custom
-import ErrorFunc as error
+import Error_Func as error
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 #Globales

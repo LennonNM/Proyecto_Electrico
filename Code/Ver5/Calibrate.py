@@ -22,9 +22,9 @@ import sys
 import time
 
 ##Custom
-import CalibrateFunc as cal
-import ErrorFunc as error
-import OffsetFileFunc as offset
+import Calibrate_Func as cal
+import Error_Func as error
+import OffsetFile_Func as offset
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------

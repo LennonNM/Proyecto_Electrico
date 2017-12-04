@@ -20,7 +20,7 @@ from itertools import islice
 from os.path import dirname, abspath
 
 ##Custom
-import ErrorFunc as error
+import Error_Func as error
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
