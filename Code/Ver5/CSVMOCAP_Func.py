@@ -461,29 +461,28 @@ def startAdjustData(nombreArchivo, offFile):
     listaDeActuadores = deepcopy(coordenadasCompletas)
     ## RArm
     for i, item in enumerate(listaDeActuadores[0]):
-        for j, item2 in enumerate(listaDeActuadores[0][i]):
+        for j, item2 in enumerate(listaDeActuadores[0][j]):
             listaDeActuadores[0][i][j] = round((listaDeActuadores[0][i][j] - listaDeActuadores[4][i][j]), 2)
     ## RLeg
     for i, item in enumerate(listaDeActuadores[1]):
-        for j, item2 in enumerate(listaDeActuadores[1][i]):
+        for j, item2 in enumerate(listaDeActuadores[1][j]):
             listaDeActuadores[1][i][j] = round((listaDeActuadores[1][i][j] - listaDeActuadores[4][i][j]), 2)
     ## LLeg
     for i, item in enumerate(listaDeActuadores[2]):
-        for j, item2 in enumerate(listaDeActuadores[2][i]):
+        for j, item2 in enumerate(listaDeActuadores[2][j]):
             listaDeActuadores[2][i][j] = round((listaDeActuadores[2][i][j] - listaDeActuadores[4][i][j]), 2)
     ## LArm
     for i, item in enumerate(listaDeActuadores[3]):
-        for j, item2 in enumerate(listaDeActuadores[3][i]):
+        for j, item2 in enumerate(listaDeActuadores[3][j]):
             listaDeActuadores[3][i][j] = round((listaDeActuadores[3][i][j] - listaDeActuadores[4][i][j]), 2)
     ## Head
     for i, item in enumerate(listaDeActuadores[5]):
-        for j, item2 in enumerate(listaDeActuadores[5][i]):
+        for j, item2 in enumerate(listaDeActuadores[5][j]):
             listaDeActuadores[5][i][j] = round((listaDeActuadores[5][i][j] - listaDeActuadores[5][i][j]), 2)
     ## TORSO
-    for i, item in enumerate(listaDeActuadores[4]):
-        for j, item2 in enumerate(listaDeActuadores[4][i]):
-            listaDeActuadores[4][i][j] = round((listaDeActuadores[4][i][j] - listaDeActuadores[4][i][j]), 2)
-    #Genera vector con datos respecto al TORSO
+    #No se controla el Torso directamente ya que contiene el marco de referencia
+
+    #Genera lista con datos respecto al TORSO
     global coordenadasTORSO
     coordenadasTORSO = [listaDeActuadores[0], listaDeActuadores[1], listaDeActuadores[2], listaDeActuadores[3], listaDeActuadores[5]]
 
