@@ -1,3 +1,2 @@
 - Comparación de marcos de referencia del NAO con el MoCap (en sección Ajuste de datos de una grabación del MoCap)
-- Pantallazo de Motive con los cuerpos rígidos
 - Bloque Choregraphe conectado
