@@ -206,7 +206,7 @@ def main(robotIP,coreo,marcoRef,offFile):
     COM = [0.0,0.0,0.0]
     listaTorsoX = list()
     listaTorsoY = list()
-    balancePiernas = True
+    balancePiernas = "centro"
 
     #motion.wbEnableEffectorOptimization(effectorName, isActive);
 
@@ -214,14 +214,14 @@ def main(robotIP,coreo,marcoRef,offFile):
     if marcoRef.upper() == "ARRIBA":
         for i in range(0,len(listaCoordenadas[0]),fps):
             #Calcula promedio de la posicion del torso deseada
-            for item in listaCoordenadas[2][i:i+fps-1]:
-                listaTorsoX.append(item[0])
-                listaTorsoY.append(item[1])
-            promTorsoX = np.mean(listaTorsoX)
-            promTorsoY = np.mean(listaTorsoY)
+            #for item in listaCoordenadas[2][i:i+fps-1]:
+            #    listaTorsoX.append(item[0])
+            #    listaTorsoY.append(item[1])
+            #promTorsoX = np.mean(listaTorsoX)
+            #promTorsoY = np.mean(listaTorsoY)
 
             #Obtiene posicion del COM general
-            COM = motionProxy.getCOM("Body",referencia, True)
+            #COM = motionProxy.getCOM("Body",referencia, True)
             #Para apoyarse sobre alguna pierna se analiza donde se va a posicionar al
             #torso sobre el eje Y (izq y der)
             #if promTorsoY < -0.025:
@@ -275,18 +275,18 @@ def main(robotIP,coreo,marcoRef,offFile):
             COM = motionProxy.getCOM("Body",referencia, True)
             #Para apoyarse sobre alguna pierna se analiza donde se va a posicionar al
             #torso sobre el eje Y (izq y der)
-            if promTorsoY < -0.025:
-                motionProxy.wbGoToBalance(soporteDer, 1.0)
-                balancePiernas = False
-            elif promTorsoY > 0.025:
-                motionProxy.wbGoToBalance(soporteDer, 1.0)
-                balancePiernas = False
+            if promTorsoY < -0.03:
+                if balancePiernas != "der":
+                    motionProxy.wbGoToBalance(soporteDer, 0.5)
+                    balancePiernas = "der"
+            elif promTorsoY > 0.03:
+                if balancePiernas != "izq":
+                    motionProxy.wbGoToBalance(soporteDer, 0.5)
+                    balancePiernas = "izq"
             else:
-                if balancePiernas == False:
-                    motionProxy.wbGoToBalance(soportePiernas, 1.0)
-                    balancePiernas = True
-                else:
-                    balancePiernas = True
+                if balancePiernas != "centro":
+                    motionProxy.wbGoToBalance(soportePiernas, 0.5)
+                    balancePiernas = "centro"
 
             motionProxy.positionInterpolations(listaActuadores, referencia,[
                                                                             listaCoordenadas[0][i:i+fps-1],
